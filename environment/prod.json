@@ -1,0 +1,10 @@
+{
+    "NODE_ENV" : "production",
+    "PORT": 3001,
+    "dbtype1" : "postgres",
+    "dbhost1" : "localhost",
+    "dbport1" : 5432,
+    "dbusername1" : "postgres",
+    "dbpassword1" : "YOURDATABASEPASSWORD",
+    "dbdatabase1" : "YOURDATABASENAME"
+}

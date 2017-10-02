@@ -1,0 +1,19 @@
+{%for databaseDeclaration in declaration%}
+{%for schema in databaseDeclaration.schemas%}
+import { create{{databaseDeclaration.name}}{{schema.namespace}} } from "./{{databaseDeclaration.name}}/{{schema.namespace}}/schema" ;
+import { create{{databaseDeclaration.name}}TriggerFuncs{{schema.namespace}} } from "./{{databaseDeclaration.name}}/{{schema.namespace}}/function" ;
+import { create{{databaseDeclaration.name}}Triggers{{schema.namespace}} } from "./{{databaseDeclaration.name}}/{{schema.namespace}}/trigger" ;
+{%endfor%}
+{%endfor%}
+
+f();
+
+async function f() {
+{%for databaseDeclaration in declaration%}
+{%for schema in databaseDeclaration.schemas%}
+await create{{databaseDeclaration.name}}{{schema.namespace}}();
+await create{{databaseDeclaration.name}}TriggerFuncs{{schema.namespace}}();
+await create{{databaseDeclaration.name}}Triggers{{schema.namespace}}();
+{%endfor%}
+{%endfor%}
+}

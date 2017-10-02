@@ -5,19 +5,13 @@
   "scripts": {
     "debug": "grunt debugVS --force",
     "release": "grunt release --force",
-    "build": "grunt build --force",
-    "start": "grunt --force",
-    "test": "grunt test",
-    "database": "grunt maketables --force ",
-    "notRecreateTest":"grunt testsWithoutRecreate --force",
-    "recreateTest":"grunt testsWithRecreate --force"
+    "build": "grunt build --force"
   },
   "dependencies": {
     "@types/express": "^4.0.37",
     "@types/inversify": "^2.0.33",
     "@types/node": "^8.0.28",
     "body-parser": "~1.17.1",
-    "child_process": "^1.0.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "~4.15.2",
@@ -27,7 +21,6 @@
     "grunt-ts": "^6.0.0-beta.16",
     "grunt-tslint": "^5.0.1",
     "inversify": "^4.3.0",
-    "jade": "~1.11.0",
     "morgan": "~1.8.1",
     "nunjucks": "^3.0.1",
     "path": "^0.12.7",
