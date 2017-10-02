@@ -49,7 +49,7 @@ function generateDatabase(grunt: any) {
 module.exports = generateDatabase;
 
 function CreateOtherFile(jsonDeclaration: any, pathes: any, grunt: any) {
-    configure("./src/tasks/makeTableMaker/view", {autoescape: true, trimBlocks: true});
+    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createTablesTemplate.njk", {declaration: jsonDeclaration ,
 basePath: pathes.destinationDB});
     if (rendererTemplate && rendererTemplate.trim()) {
@@ -58,7 +58,7 @@ basePath: pathes.destinationDB});
 }
 
 function CreateFileForTableCreate(datas: any, dboptions : any, grunt: any, pathes: any, historyStruct: any, schema: any) {
-    configure("./src/tasks/makeTableMaker/view", {autoescape: true, trimBlocks: true});
+    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createBaseTemplate.njk", {data: datas, options: dboptions,
         historyPath: pathes.pathToHistory, basePath: pathes.baseModelPath, schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
@@ -66,13 +66,13 @@ function CreateFileForTableCreate(datas: any, dboptions : any, grunt: any, pathe
     }
 }
  function CreateFileForTriggersCreateForSchema(datas: any, dboptions : any, grunt: any, pathes: any, historyStruct: any, schema: any) {
-    configure("./src/tasks/makeTableMaker/view", {autoescape: true, trimBlocks: true});
+    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createTriggerFunctionTemplate.njk", {data: datas, options: dboptions, hStr: historyStruct,
         historyPath: pathes.pathToHistory, schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/" +  datas.name + "/" +  schema.namespace + "/" + "function.ts", rendererTemplate);
     }
-    configure("./src/tasks/makeTableMaker/view", {autoescape: true, trimBlocks: true});
+    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
     rendererTemplate = render("createTriggerTemplate.njk", {data: datas, options: dboptions, historyPath: pathes.pathToHistory, schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/" +  datas.name + "/" +  schema.namespace + "/" + "trigger.ts", rendererTemplate);
@@ -80,7 +80,7 @@ function CreateFileForTableCreate(datas: any, dboptions : any, grunt: any, pathe
  }
 
  function CreateDBCreator(grunt: any, pathes: any, jsonDeclaration: any) {
-    configure("./src/tasks/makeTableMaker/view", {autoescape: true, trimBlocks: true});
+    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createDBTemplate.njk", {scriptsDestination : pathes.destinationDB, declaration: jsonDeclaration});
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/generateDB.ts", rendererTemplate);
