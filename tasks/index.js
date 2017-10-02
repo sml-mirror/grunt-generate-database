@@ -48,7 +48,7 @@ function generateDatabase(grunt) {
 }
 module.exports = generateDatabase;
 function CreateOtherFile(jsonDeclaration, pathes, grunt) {
-    nunjucks_1.configure("./src/tasks/makeTableMaker/view", { autoescape: true, trimBlocks: true });
+    nunjucks_1.configure("./src/tasks/view", { autoescape: true, trimBlocks: true });
     var rendererTemplate = nunjucks_1.render("createTablesTemplate.njk", { declaration: jsonDeclaration,
         basePath: pathes.destinationDB });
     if (rendererTemplate && rendererTemplate.trim()) {
@@ -56,7 +56,7 @@ function CreateOtherFile(jsonDeclaration, pathes, grunt) {
     }
 }
 function CreateFileForTableCreate(datas, dboptions, grunt, pathes, historyStruct, schema) {
-    nunjucks_1.configure("./src/tasks/makeTableMaker/view", { autoescape: true, trimBlocks: true });
+    nunjucks_1.configure("./src/tasks/view", { autoescape: true, trimBlocks: true });
     var rendererTemplate = nunjucks_1.render("createBaseTemplate.njk", { data: datas, options: dboptions,
         historyPath: pathes.pathToHistory, basePath: pathes.baseModelPath, schema: schema });
     if (rendererTemplate && rendererTemplate.trim()) {
@@ -64,20 +64,20 @@ function CreateFileForTableCreate(datas, dboptions, grunt, pathes, historyStruct
     }
 }
 function CreateFileForTriggersCreateForSchema(datas, dboptions, grunt, pathes, historyStruct, schema) {
-    nunjucks_1.configure("./src/tasks/makeTableMaker/view", { autoescape: true, trimBlocks: true });
+    nunjucks_1.configure("./src/tasks/view", { autoescape: true, trimBlocks: true });
     var rendererTemplate = nunjucks_1.render("createTriggerFunctionTemplate.njk", { data: datas, options: dboptions, hStr: historyStruct,
         historyPath: pathes.pathToHistory, schema: schema });
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/" + datas.name + "/" + schema.namespace + "/" + "function.ts", rendererTemplate);
     }
-    nunjucks_1.configure("./src/tasks/makeTableMaker/view", { autoescape: true, trimBlocks: true });
+    nunjucks_1.configure("./src/tasks/view", { autoescape: true, trimBlocks: true });
     rendererTemplate = nunjucks_1.render("createTriggerTemplate.njk", { data: datas, options: dboptions, historyPath: pathes.pathToHistory, schema: schema });
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/" + datas.name + "/" + schema.namespace + "/" + "trigger.ts", rendererTemplate);
     }
 }
 function CreateDBCreator(grunt, pathes, jsonDeclaration) {
-    nunjucks_1.configure("./src/tasks/makeTableMaker/view", { autoescape: true, trimBlocks: true });
+    nunjucks_1.configure("./src/tasks/view", { autoescape: true, trimBlocks: true });
     var rendererTemplate = nunjucks_1.render("createDBTemplate.njk", { scriptsDestination: pathes.destinationDB, declaration: jsonDeclaration });
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/generateDB.ts", rendererTemplate);
