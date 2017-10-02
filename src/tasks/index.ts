@@ -3,6 +3,7 @@ import {createConnection, ConnectionOptions} from "typeorm";
 import {render, renderString, configure} from "nunjucks";
 import {DbOptions} from "./model/options";
 import {parseStruct} from "ts-structure-parser";
+import * as path from "path";
 
 function generateDatabase(grunt: any) {
     grunt.registerMultiTask("generateDatabase", function() {
@@ -58,7 +59,8 @@ basePath: pathes.destinationDB});
 }
 
 function CreateFileForTableCreate(datas: any, dboptions : any, grunt: any, pathes: any, historyStruct: any, schema: any) {
-    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
+    let scriptFolder = path.resolve(__dirname, "view/");
+    configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createBaseTemplate.njk", {data: datas, options: dboptions,
         historyPath: pathes.pathToHistory, basePath: pathes.baseModelPath, schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
@@ -66,13 +68,14 @@ function CreateFileForTableCreate(datas: any, dboptions : any, grunt: any, pathe
     }
 }
  function CreateFileForTriggersCreateForSchema(datas: any, dboptions : any, grunt: any, pathes: any, historyStruct: any, schema: any) {
-    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
+    let scriptFolder = path.resolve(__dirname, "view/");
+    configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createTriggerFunctionTemplate.njk", {data: datas, options: dboptions, hStr: historyStruct,
         historyPath: pathes.pathToHistory, schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/" +  datas.name + "/" +  schema.namespace + "/" + "function.ts", rendererTemplate);
     }
-    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
+    configure(scriptFolder, {autoescape: true, trimBlocks: true});
     rendererTemplate = render("createTriggerTemplate.njk", {data: datas, options: dboptions, historyPath: pathes.pathToHistory, schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/" +  datas.name + "/" +  schema.namespace + "/" + "trigger.ts", rendererTemplate);
@@ -80,7 +83,8 @@ function CreateFileForTableCreate(datas: any, dboptions : any, grunt: any, pathe
  }
 
  function CreateDBCreator(grunt: any, pathes: any, jsonDeclaration: any) {
-    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
+    let scriptFolder = path.resolve(__dirname, "view/");
+    configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createDBTemplate.njk", {scriptsDestination : pathes.destinationDB, declaration: jsonDeclaration});
     if (rendererTemplate && rendererTemplate.trim()) {
         grunt.file.write(pathes.destinationDB + "/generateDB.ts", rendererTemplate);
