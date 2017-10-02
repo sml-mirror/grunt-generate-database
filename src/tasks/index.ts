@@ -2,11 +2,10 @@ import "reflect-metadata";
 import {createConnection, ConnectionOptions} from "typeorm";
 import {render, renderString, configure} from "nunjucks";
 import {DbOptions} from "./model/options";
-import {parseStruct} from "ts-file-parser";
-//import {Model1} from "../../models/simplemodels/model1";
+import {parseStruct} from "ts-structure-parser";
 
-function makeTableMaker(grunt: any) {
-    grunt.registerMultiTask("makeTableMaker", function() {
+function generateDatabase(grunt: any) {
+    grunt.registerMultiTask("generateDatabase", function() {
         let dbOptions = new DbOptions();
         dbOptions.type = process.env.dbtype;
         dbOptions.host = process.env.dbhost;
@@ -47,7 +46,7 @@ function makeTableMaker(grunt: any) {
         CreateDBCreator(grunt, this.data, jsonDeclaration);
     });
 }
-module.exports = makeTableMaker;
+module.exports = generateDatabase;
 
 function CreateOtherFile(jsonDeclaration: any, pathes: any, grunt: any) {
     configure("./src/tasks/makeTableMaker/view", {autoescape: true, trimBlocks: true});

@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const nunjucks_1 = require("nunjucks");
 const options_1 = require("./model/options");
-const tsStructureParser_1 = require("./structure_parser/tsStructureParser");
-function makeTableMaker(grunt) {
-    grunt.registerMultiTask("makeTableMaker", function () {
+const ts_structure_parser_1 = require("ts-structure-parser");
+function generateDatabase(grunt) {
+    grunt.registerMultiTask("generateDatabase", function () {
         let dbOptions = new options_1.DbOptions();
         dbOptions.type = process.env.dbtype;
         dbOptions.host = process.env.dbhost;
@@ -37,7 +37,7 @@ function makeTableMaker(grunt) {
                     var pathtoHistory = this.data.pathToHistory + table.pathToModel + ".ts";
                     stringFile += grunt.file.read(this.data.pathToHistory + table.pathToModel + ".ts", options);
                 }
-                var jsonStructure = tsStructureParser_1.parseStruct(stringFile, {}, "");
+                var jsonStructure = ts_structure_parser_1.parseStruct(stringFile, {}, "");
                 CreateFileForTableCreate(jsonDeclaration[index], dbOptions, grunt, this.data, jsonStructure, schms[innerIndex]);
                 CreateFileForTriggersCreateForSchema(jsonDeclaration[index], dbOptions, grunt, this.data, jsonStructure, schms[innerIndex]);
                 stringFile = "";
@@ -46,7 +46,7 @@ function makeTableMaker(grunt) {
         CreateDBCreator(grunt, this.data, jsonDeclaration);
     });
 }
-module.exports = makeTableMaker;
+module.exports = generateDatabase;
 function CreateOtherFile(jsonDeclaration, pathes, grunt) {
     nunjucks_1.configure("./src/tasks/makeTableMaker/view", { autoescape: true, trimBlocks: true });
     var rendererTemplate = nunjucks_1.render("createTablesTemplate.njk", { declaration: jsonDeclaration,
