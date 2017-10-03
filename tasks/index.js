@@ -48,15 +48,6 @@ function generateDatabase(grunt) {
     });
 }
 module.exports = generateDatabase;
-function CreateOtherFile(jsonDeclaration, pathes, grunt) {
-    let scriptFolder = path.resolve(__dirname, "view/");
-    nunjucks_1.configure(scriptFolder, { autoescape: true, trimBlocks: true });
-    var rendererTemplate = nunjucks_1.render("createTablesTemplate.njk", { declaration: jsonDeclaration,
-        basePath: pathes.destinationDB });
-    if (rendererTemplate && rendererTemplate.trim()) {
-        grunt.file.write(pathes.destinationDB + "generateDB.ts", rendererTemplate);
-    }
-}
 function CreateFileForTableCreate(datas, dboptions, grunt, pathes, historyStruct, schema) {
     let scriptFolder = path.resolve(__dirname, "view/");
     nunjucks_1.configure(scriptFolder, { autoescape: true, trimBlocks: true });

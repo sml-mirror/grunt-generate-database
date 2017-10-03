@@ -49,16 +49,6 @@ function generateDatabase(grunt: any) {
 }
 module.exports = generateDatabase;
 
-function CreateOtherFile(jsonDeclaration: any, pathes: any, grunt: any) {
-    let scriptFolder = path.resolve(__dirname, "view/");
-    configure(scriptFolder, {autoescape: true, trimBlocks: true});
-    var rendererTemplate = render("createTablesTemplate.njk", {declaration: jsonDeclaration ,
-basePath: pathes.destinationDB});
-    if (rendererTemplate && rendererTemplate.trim()) {
-        grunt.file.write(pathes.destinationDB + "generateDB.ts", rendererTemplate);
-    }
-}
-
 function CreateFileForTableCreate(datas: any, dboptions : any, grunt: any, pathes: any, historyStruct: any, schema: any) {
     let scriptFolder = path.resolve(__dirname, "view/");
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
