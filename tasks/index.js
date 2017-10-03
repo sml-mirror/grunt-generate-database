@@ -49,7 +49,8 @@ function generateDatabase(grunt) {
 }
 module.exports = generateDatabase;
 function CreateOtherFile(jsonDeclaration, pathes, grunt) {
-    nunjucks_1.configure("./src/tasks/view", { autoescape: true, trimBlocks: true });
+    let scriptFolder = path.resolve(__dirname, "view/");
+    nunjucks_1.configure(scriptFolder, { autoescape: true, trimBlocks: true });
     var rendererTemplate = nunjucks_1.render("createTablesTemplate.njk", { declaration: jsonDeclaration,
         basePath: pathes.destinationDB });
     if (rendererTemplate && rendererTemplate.trim()) {
