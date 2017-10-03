@@ -50,7 +50,8 @@ function generateDatabase(grunt: any) {
 module.exports = generateDatabase;
 
 function CreateOtherFile(jsonDeclaration: any, pathes: any, grunt: any) {
-    configure("./src/tasks/view", {autoescape: true, trimBlocks: true});
+    let scriptFolder = path.resolve(__dirname, "view/");
+    configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createTablesTemplate.njk", {declaration: jsonDeclaration ,
 basePath: pathes.destinationDB});
     if (rendererTemplate && rendererTemplate.trim()) {
