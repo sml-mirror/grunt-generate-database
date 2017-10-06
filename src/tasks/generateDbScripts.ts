@@ -1,8 +1,8 @@
 import * as cr from "./createDbScripts";
 
-function generateDatabase(grunt: any) {
+function generateDatabase(grunt: IGrunt) {
     grunt.registerMultiTask("generateDatabase", function() {
-       let opt = cr.CreateInitOptionsByGrunt(this);
+       let opt = cr.CreateInitOptionsByGrunt(grunt);
        cr.CreateDbSCriptsInternal(opt);
     });
 }

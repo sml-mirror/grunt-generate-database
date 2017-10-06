@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const nunjucks_1 = require("nunjucks");
 const options_1 = require("./model/options");
+const schema_1 = require("./model/schema");
+const table_1 = require("./model/table");
+const declaration_1 = require("./model/declaration");
 const ts_structure_parser_1 = require("ts-structure-parser");
 const path = require("path");
 function CreateFileForTableCreate(datas, options, historyStruct, schema) {
@@ -60,12 +63,39 @@ function CreateDBCreator(options, jsonDeclaration) {
 function CreateDbSCriptsInternal(options) {
     var fs = require("fs");
     var declaration = fs.readFileSync(options.pathToDeclaration, "utf-8");
-    var jsonDeclaration = JSON.parse(declaration);
+    var jsonDeclarationObj = JSON.parse(declaration);
+    let jsonDeclaration = new Array();
+    for (let index = 0; index < jsonDeclarationObj.length; index++) {
+        let declrtion = new declaration_1.Declaration();
+        declrtion.dbtype = jsonDeclarationObj[index].dbtype;
+        declrtion.dbusername = jsonDeclarationObj[index].dbusername;
+        declrtion.dbdatabase = jsonDeclarationObj[index].dbdatabase;
+        declrtion.dbhost = jsonDeclarationObj[index].dbhost;
+        declrtion.dbpassword = jsonDeclarationObj[index].dbpassword;
+        declrtion.dbport = jsonDeclarationObj[index].dbport;
+        declrtion.name = jsonDeclarationObj[index].name;
+        let schms = new Array();
+        jsonDeclarationObj[index].schemas.forEach(schema => {
+            let schm = new schema_1.Schema();
+            schm.tables = new Array();
+            schm.namespace = schema.namespace;
+            schema.tables.forEach(table => {
+                let tble = new table_1.Table();
+                tble.name = table.name;
+                tble.isHistoried = table.isHistoried;
+                tble.pathToModel = table.pathToModel;
+                schm.tables.push(tble);
+            });
+            schms.push(schm);
+        });
+        declrtion.schemas = schms;
+        jsonDeclaration.push(declrtion);
+    }
     var stringFile = "";
     var globalStringFile = "";
-    for (var index = 0; index < jsonDeclaration.length; index++) {
-        var schms = jsonDeclaration[index].schemas;
+    for (let index = 0; index < jsonDeclaration.length; index++) {
         stringFile = "";
+        let schms = jsonDeclaration[index].schemas;
         for (var innerIndex = 0; innerIndex < schms.length; innerIndex++) {
             for (var tableIndex = 0; tableIndex < schms[innerIndex].tables.length; tableIndex++) {
                 var table = schms[innerIndex].tables[tableIndex];
@@ -94,14 +124,14 @@ function CreateInitOptionsByGrunt(grunt) {
     dbOptions.username = process.env.dbusername;
     dbOptions.password = process.env.dbpassword;
     dbOptions.database = process.env.dbdatabase;
-    dbOptions.reCreate = grunt.data.reCreate;
+    dbOptions.reCreate = grunt.task.current.data.reCreate;
     opt.dbOptions = dbOptions;
-    opt.pathToDeclaration = grunt.data.pathToDeclaration;
-    opt.baseModelPath = grunt.data.baseModelPath;
-    opt.destinationDB = grunt.data.destinationDB;
-    opt.pathToHistory = grunt.data.pathToHistory;
-    opt.pathToHistoryFromGeneratedModel = grunt.data.pathToHistoryFromGeneratedModel;
-    opt.baseModelPathFromGeneratedModel = grunt.data.baseModelPathFromGeneratedModel;
+    opt.pathToDeclaration = grunt.task.current.data.pathToDeclaration;
+    opt.baseModelPath = grunt.task.current.data.baseModelPath;
+    opt.destinationDB = grunt.task.current.data.destinationDB;
+    opt.pathToHistory = grunt.task.current.data.pathToHistory;
+    opt.pathToHistoryFromGeneratedModel = grunt.task.current.data.pathToHistoryFromGeneratedModel;
+    opt.baseModelPathFromGeneratedModel = grunt.task.current.data.baseModelPathFromGeneratedModel;
     return opt;
 }
 exports.CreateInitOptionsByGrunt = CreateInitOptionsByGrunt;

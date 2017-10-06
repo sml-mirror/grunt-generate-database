@@ -84,11 +84,17 @@ module.exports = function(grunt) {
         src: ['**/*.njk'],
         dest: './tasks'
       },
-      templateToSrc:{
+      templateToTest:{
         expand: true,
         cwd: './src/tasks',
         src: ['**/*.njk'],
         dest: './test/dist/src/tasks'
+      },
+      templateToDist:{
+        expand: true,
+        cwd: './src/tasks',
+        src: ['**/*.njk'],
+        dest: './dist/src/tasks'
       }
     },
 
@@ -101,11 +107,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   
   grunt.registerTask("build", [
-    "clean:app", "ts:app", "ts:tasks", "tslint", "copy:template","copy:templateToSrc"
+    "clean:app", "ts:app", "ts:tasks", "tslint", "copy:template","copy:templateToDist"
   ]);
 
   grunt.registerTask("test", [
-    "clean:test","copy:templateToSrc", "ts:test",  "mochaTest"
+    "clean:test","copy:templateToTest", "ts:test",  "mochaTest"
   ]); 
 
 };

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cr = require("./createDbScripts");
 function generateDatabase(grunt) {
     grunt.registerMultiTask("generateDatabase", function () {
-        let opt = cr.CreateInitOptionsByGrunt(this);
+        let opt = cr.CreateInitOptionsByGrunt(grunt);
         cr.CreateDbSCriptsInternal(opt);
     });
 }
