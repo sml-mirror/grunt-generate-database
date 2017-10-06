@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("reflect-metadata");
 const cr = require("./createDbScripts");
 function generateDatabase(grunt) {
     grunt.registerMultiTask("generateDatabase", function () {

@@ -29,6 +29,15 @@ describe("E2E Tests", () => {
         var res = fs.readFileSync("./test/dist/dbscript/generateDB.ts", "utf-8");
         var exp = fs.readFileSync("./test/src/expected/hero/expectedGenDb.ts", "utf-8");
         expect(res).be.equal(exp);
+        res = fs.readFileSync("./test/dist/dbscript/base1/bublic/function.ts", "utf-8");
+        exp = fs.readFileSync("./test/src/expected/hero/function.ts", "utf-8");
+        expect(res).be.equal(exp);
+        res = fs.readFileSync("./test/dist/dbscript/base1/bublic/schema.ts", "utf-8");
+        exp = fs.readFileSync("./test/src/expected/hero/schema.ts", "utf-8");
+        expect(res).be.equal(exp);
+        res = fs.readFileSync("./test/dist/dbscript/base1/bublic/trigger.ts", "utf-8");
+        exp = fs.readFileSync("./test/src/expected/hero/trigger.ts", "utf-8");
+        expect(res).be.equal(exp);
         done();
       });
 
