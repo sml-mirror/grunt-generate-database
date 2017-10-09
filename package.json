@@ -1,6 +1,6 @@
 {
   "name": "grunt-generate-database",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Grunt task for create database generation scripts by models description",
   "private": false,
   "main": "dist/src/index.js",
@@ -13,7 +13,7 @@
     "path": "^0.12.7",
     "ts-file-parser": "^0.0.1",
     "typescript": "^2.5.3",
-    "mkdirp":"^0.5.1"
+    "mkdirp": "^0.5.1"
   },
   "devDependencies": {
     "typeorm": "^0.1.0-alpha.47",
