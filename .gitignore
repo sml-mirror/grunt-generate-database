@@ -5,6 +5,7 @@
 /test/dist
 /tmp
 /out-tsc
+/tasks
 
 # dependencies
 /node_modules
