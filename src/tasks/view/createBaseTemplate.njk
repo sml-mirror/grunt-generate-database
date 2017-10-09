@@ -4,7 +4,7 @@ import { {{table.name}} } from "{{basePath+table.pathToModel}}";
 import { h{{table.name}} } from "{{historyPath+table.pathToModel}}";
 {% endif %}
 {% endfor %}
-import {createConnection, ConnectionOptions} from "typeorm";
+import {createConnection, ConnectionOptions, Connection} from "typeorm";
 
 export async function create{{data.name}}{{schema.namespace}}() {
     const pgp = require("pg-promise")({});
@@ -20,11 +20,15 @@ export async function create{{data.name}}{{schema.namespace}}() {
     await pgp.end();
     return await createConnection({
     type: "postgres",
-    host:  process.env.{{data.dbhost}},
-    port: process.env.{{data.dbport}},
-    username:  process.env.{{data.dbusername}},
-    password: process.env.{{data.dbpassword}},
-    database: process.env.{{data.dbdatabase}},
+    replication: {
+          master: {
+                  host:  process.env.{{data.dbhost}},
+                  port: parseInt(process.env.{{data.dbport}}),
+                  username:  process.env.{{data.dbusername}},
+                  password: process.env.{{data.dbpassword}},
+                  database: process.env.{{data.dbdatabase}}
+          },
+          slaves: []
     entities: [
 {% for table in schema.tables %}
       {{table.name}}
@@ -41,5 +45,5 @@ export async function create{{data.name}}{{schema.namespace}}() {
         dropSchema: {{options.reCreate}}
          })
          .catch(error => console.log(error))
-         .then(connection => connection.close());
+         .then( connection => (connection as Connection).close());
 }
