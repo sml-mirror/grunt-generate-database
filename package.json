@@ -18,6 +18,7 @@
     "typeorm": "^0.1.0-alpha.47",
     "pg": "^7.3.0",
     "pg-promise": "^6.9.0",
+    "@types/grunt": "^0.4.22",
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.43",
     "@types/node": "^8.0.31",
