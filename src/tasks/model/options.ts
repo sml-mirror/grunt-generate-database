@@ -2,9 +2,7 @@ export class Options {
     public dbOptions: DbOptions;
     public pathToDeclaration: string;
     public pathToHistory: string;
-    public pathToHistoryFromGeneratedModel: string;
     public baseModelPath: string;
-    public baseModelPathFromGeneratedModel: string;
     public destinationDB: string;
 }
 export class DbOptions {

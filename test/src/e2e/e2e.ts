@@ -3,7 +3,7 @@
 import * as fs from "fs";
 import {} from "mocha";
 import {expect} from "chai";
-import {CreateDbSCripts} from "../../../src/index";
+import {CreateDbSCripts, createRelativePath} from "../../../src/index";
 import {Options, DbOptions} from "../../../src/tasks/model/options";
 
 
@@ -21,7 +21,6 @@ describe("E2E Tests", () => {
         let options = new Options();
         options.dbOptions = dbOptions;
         options.baseModelPath = "./test/src/";
-        options.baseModelPathFromGeneratedModel = "../../../../../test/src/";
         options.destinationDB = "./test/dist/dbscript";
         options.pathToDeclaration = "./test/src/declaration.json";
         CreateDbSCripts(options);

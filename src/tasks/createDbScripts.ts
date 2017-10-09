@@ -12,7 +12,8 @@ function CreateFileForTableCreate(datas: Declaration, options: Options, historyS
     let scriptFolder = path.resolve(__dirname, "view/");
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createBaseTemplate.njk", {data: datas, options: options.dbOptions,
-        historyPath: options.pathToHistoryFromGeneratedModel, basePath: options.baseModelPathFromGeneratedModel, schema: schema});
+        historyPath: createRelativePathInternal(options.pathToHistory, options.destinationDB),
+        basePath: createRelativePathInternal(options.baseModelPath, options.destinationDB), schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
         var fs = require("fs");
         var mkdirp = require("mkdirp");
@@ -38,7 +39,7 @@ function CreateFileForTriggersCreateForSchema(datas: Declaration, options: Optio
     }
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
     rendererTemplate = render("createTriggerTemplate.njk", {data: datas, options: options.dbOptions,
-            historyPath: options.pathToHistoryFromGeneratedModel, schema: schema});
+            historyPath: createRelativePathInternal(options.pathToHistory, options.destinationDB), schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
         fs = require("fs");
         mkdirp = require("mkdirp");
@@ -133,7 +134,40 @@ export function CreateInitOptionsByGrunt(grunt: IGrunt ): Options {
     opt.baseModelPath = grunt.task.current.data.baseModelPath;
     opt.destinationDB = grunt.task.current.data.destinationDB;
     opt.pathToHistory = grunt.task.current.data.pathToHistory;
-    opt.pathToHistoryFromGeneratedModel = grunt.task.current.data.pathToHistoryFromGeneratedModel;
-    opt.baseModelPathFromGeneratedModel = grunt.task.current.data.baseModelPathFromGeneratedModel;
     return opt;
+}
+
+export function createRelativePathInternal (basePath: string , commonScriptPath: string ): string {
+    if (basePath === undefined) {
+        return null;
+    }
+    let pathLocal: string;
+    pathLocal = "../../../";
+    let commonFolder = "";
+    let cIndex = -1;
+    let breakPoint = false;
+    let pointCount = 0;
+    var baseFolders = basePath.split("/");
+    var commonScriptFolders = commonScriptPath.split("/");
+    for ( let folderIndex = commonScriptFolders.length - 1; folderIndex >= 0; folderIndex--) {
+        for ( let genfolderIndex = baseFolders.length - 1;  genfolderIndex >= 0;  genfolderIndex--) {
+            if (baseFolders[genfolderIndex] === commonScriptFolders[folderIndex]) {
+                pointCount = commonScriptFolders.length - 1  - folderIndex;
+                commonFolder = baseFolders[genfolderIndex];
+                cIndex = folderIndex;
+                breakPoint = true;
+                break;
+            }
+        }
+        if (breakPoint) {
+            break;
+        }
+    }
+    for (let pInd = 0; pInd < pointCount; pInd++ ) {
+        pathLocal += "../";
+    }
+    for ( let index = cIndex; index < baseFolders.length - 1; index++) {
+        pathLocal += baseFolders[index] + "/";
+    }
+   return pathLocal;
 }
