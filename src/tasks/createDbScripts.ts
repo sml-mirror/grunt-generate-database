@@ -8,7 +8,7 @@ import {Declaration} from "./model/declaration";
 import {parseStruct, Module} from "ts-structure-parser";
 import * as path from "path";
 
-function CreateFileForTableCreate(datas: any, options: Options, historyStruct: Module, schema: Schema) {
+function CreateFileForTableCreate(datas: Declaration, options: Options, historyStruct: Module, schema: Schema): void {
     let scriptFolder = path.resolve(__dirname, "view/");
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createBaseTemplate.njk", {data: datas, options: options.dbOptions,
@@ -23,7 +23,7 @@ function CreateFileForTableCreate(datas: any, options: Options, historyStruct: M
     }
 }
 
-function CreateFileForTriggersCreateForSchema(datas: Declaration, options: Options, historyStruct: Module, schema: Schema) {
+function CreateFileForTriggersCreateForSchema(datas: Declaration, options: Options, historyStruct: Module, schema: Schema): void {
     let scriptFolder = path.resolve(__dirname, "view/");
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createTriggerFunctionTemplate.njk", {data: datas, options: options.dbOptions, hStr: historyStruct,
@@ -49,7 +49,7 @@ function CreateFileForTriggersCreateForSchema(datas: Declaration, options: Optio
     }
 }
 
-function CreateDBCreator(options: Options, jsonDeclaration: Declaration[]) {
+function CreateDBCreator(options: Options, jsonDeclaration: Declaration[]): void {
     let scriptFolder = path.resolve(__dirname, "view/");
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createDBTemplate.njk", {scriptsDestination : options.destinationDB, declaration: jsonDeclaration});
@@ -63,7 +63,7 @@ function CreateDBCreator(options: Options, jsonDeclaration: Declaration[]) {
     }
 }
 
-export function CreateDbSCriptsInternal(options: Options) {
+export function CreateDbSCriptsInternal(options: Options): void {
     var fs = require("fs");
     var declaration = fs.readFileSync(options.pathToDeclaration, "utf-8");
     var jsonDeclarationObj = JSON.parse(declaration);
