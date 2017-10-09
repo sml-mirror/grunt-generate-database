@@ -1,1 +1,0 @@
-{"version":3,"file":"generateDbScripts.js","sourceRoot":"","sources":["../src/tasks/generateDbScripts.ts"],"names":[],"mappings":";;AAAA,wCAAwC;AAExC,0BAA0B,KAAa;IACnC,KAAK,CAAC,iBAAiB,CAAC,kBAAkB,EAAE;QACzC,IAAI,GAAG,GAAG,EAAE,CAAC,wBAAwB,CAAC,KAAK,CAAC,CAAC;QAC7C,EAAE,CAAC,uBAAuB,CAAC,GAAG,CAAC,CAAC;IACnC,CAAC,CAAC,CAAC;AACP,CAAC;AACD,MAAM,CAAC,OAAO,GAAG,gBAAgB,CAAC"}
