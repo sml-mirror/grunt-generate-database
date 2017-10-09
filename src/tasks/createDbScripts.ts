@@ -133,7 +133,39 @@ export function CreateInitOptionsByGrunt(grunt: IGrunt ): Options {
     opt.baseModelPath = grunt.task.current.data.baseModelPath;
     opt.destinationDB = grunt.task.current.data.destinationDB;
     opt.pathToHistory = grunt.task.current.data.pathToHistory;
-    opt.pathToHistoryFromGeneratedModel = grunt.task.current.data.pathToHistoryFromGeneratedModel;
-    opt.baseModelPathFromGeneratedModel = grunt.task.current.data.baseModelPathFromGeneratedModel;
+    opt.pathToHistoryFromGeneratedModel = createRelativePathInternal(opt.pathToHistory, opt.destinationDB);
+    opt.baseModelPathFromGeneratedModel = createRelativePathInternal(opt.baseModelPath, opt.destinationDB);
     return opt;
+}
+
+export function createRelativePathInternal (basePath: string , commonScriptPath: string ): string {
+    let pathLocal: string;
+    pathLocal = "../../../";
+    let commonFolder = "";
+    let cIndex = -1;
+    let breakPoint = false;
+    let pointCount = 0;
+    var baseFolders = basePath.split("/");
+    var commonScriptFolders = commonScriptPath.split("/");
+    for ( let folderIndex = commonScriptFolders.length - 1; folderIndex >= 0; folderIndex--) {
+        for ( let genfolderIndex = baseFolders.length - 1;  genfolderIndex >= 0;  genfolderIndex--) {
+            if (baseFolders[genfolderIndex] === commonScriptFolders[folderIndex]) {
+                pointCount = commonScriptFolders.length - 1  - folderIndex;
+                commonFolder = baseFolders[genfolderIndex];
+                cIndex = folderIndex;
+                breakPoint = true;
+                break;
+            }
+        }
+        if (breakPoint) {
+            break;
+        }
+    }
+    for (let pInd = 0; pInd < pointCount; pInd++ ) {
+        pathLocal += "../";
+    }
+    for ( let index = cIndex; index < baseFolders.length - 1; index++) {
+        pathLocal += baseFolders[index] + "/";
+    }
+   return pathLocal;
 }
