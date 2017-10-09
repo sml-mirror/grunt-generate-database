@@ -23,7 +23,6 @@ describe("E2E Tests", () => {
         options.baseModelPath = "./test/src/";
         options.destinationDB = "./test/dist/dbscript";
         options.pathToDeclaration = "./test/src/declaration.json";
-        options.baseModelPathFromGeneratedModel = createRelativePath(options.baseModelPath, options.destinationDB);
         CreateDbSCripts(options);
         var fs = require("fs");
         var res = fs.readFileSync("./test/dist/dbscript/generateDB.ts", "utf-8");
