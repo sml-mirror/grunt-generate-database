@@ -1,0 +1,25 @@
+[
+    {
+      "name" : "base1",
+      "dbtype" : "dbtype1",
+      "dbhost" : "dbhost1",
+      "dbport" : "dbport1",
+      "dbusername" : "dbusername1",
+      "dbpassword" : "dbpassword1",
+      "dbdatabase" : "dbdatabase1",
+     "schemas" : 
+     [
+       {
+         "namespace": "bublic",
+         "tables":
+         [
+           {
+             "name": "Hero", 
+             "isHistoried" : false, 
+             "pathToModel": "model/hero/hero"
+           }
+         ]
+       }
+     ]
+   }
+ ]
