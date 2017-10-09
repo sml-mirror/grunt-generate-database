@@ -6,7 +6,7 @@ const options_1 = require("./model/options");
 const schema_1 = require("./model/schema");
 const table_1 = require("./model/table");
 const declaration_1 = require("./model/declaration");
-const ts_structure_parser_1 = require("ts-structure-parser");
+const ts_file_parser_1 = require("ts-file-parser");
 const path = require("path");
 function CreateFileForTableCreate(datas, options, historyStruct, schema) {
     let scriptFolder = path.resolve(__dirname, "view/");
@@ -106,7 +106,7 @@ function CreateDbSCriptsInternal(options) {
                     stringFile += fs.readFileSync(pathtoHistory, "utf-8");
                 }
             }
-            var jsonStructure = ts_structure_parser_1.parseStruct(stringFile, {}, "");
+            var jsonStructure = ts_file_parser_1.parseStruct(stringFile, {}, "");
             CreateFileForTableCreate(jsonDeclaration[index], options, jsonStructure, schms[innerIndex]);
             CreateFileForTriggersCreateForSchema(jsonDeclaration[index], options, jsonStructure, schms[innerIndex]);
             stringFile = "";

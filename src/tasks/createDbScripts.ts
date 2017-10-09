@@ -5,7 +5,7 @@ import {DbOptions, Options} from "./model/options";
 import {Schema} from "./model/schema";
 import {Table} from "./model/table";
 import {Declaration} from "./model/declaration";
-import {parseStruct, Module} from "ts-structure-parser";
+import {parseStruct, Module} from "ts-file-parser";
 import * as path from "path";
 
 function CreateFileForTableCreate(datas: Declaration, options: Options, historyStruct: Module, schema: Schema): void {
