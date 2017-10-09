@@ -2,7 +2,7 @@
   "name": "grunt-generate-database",
   "version": "0.0.1",
   "description": "Grunt task for create database generation scripts by models description",
-  "private": true,
+  "private": false,
   "main": "dist/src/index.js",
   "scripts": {
     "build": "grunt build",
