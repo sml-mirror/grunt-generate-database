@@ -29,6 +29,7 @@ export async function create{{data.name}}{{schema.namespace}}() {
                   database: process.env.{{data.dbdatabase}}
           },
           slaves: []
+    },
     entities: [
 {% for table in schema.tables %}
       {{table.name}}
