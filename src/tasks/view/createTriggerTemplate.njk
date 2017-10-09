@@ -1,6 +1,6 @@
 {%for table in schema.tables%}
 {%if table.isHistoried%}
-import { h{{table.name}} } from "{{historyPath.replace("./src","../../..")+table.pathToModel}}";
+import { h{{table.name}} } from "{{historyPath.replace("./","../../../../")+table.pathToModel}}";
 {% endif %}
 {% endfor %}
 import {createConnection, ConnectionOptions} from "typeorm";

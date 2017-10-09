@@ -1,7 +1,7 @@
 {%for table in schema.tables%}
-import { {{table.name}} } from "{{basePath.replace("./src","../../..")+table.pathToModel}}";
+import { {{table.name}} } from "{{basePath+table.pathToModel}}";
 {%if table.isHistoried%}
-import { h{{table.name}} } from "{{historyPath.replace("./src","../../..")+table.pathToModel}}";
+import { h{{table.name}} } from "{{historyPath+table.pathToModel}}";
 {% endif %}
 {% endfor %}
 import {createConnection, ConnectionOptions} from "typeorm";
@@ -27,10 +27,13 @@ export async function create{{data.name}}{{schema.namespace}}() {
     database: process.env.{{data.dbdatabase}},
     entities: [
 {% for table in schema.tables %}
-      {{table.name}},
+      {{table.name}}
 {% if table.isHistoried%}
-      h{{table.name}},
+      ,h{{table.name}}
 {% endif %}
+{%if table !== schema.tables[schema.tables.length-1]%}
+,
+{%endif%}
 {%endfor%}
 ],
         schema: "{{schema.namespace}}",
