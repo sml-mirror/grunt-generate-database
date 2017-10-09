@@ -15,7 +15,7 @@ var queryproc = "";
 {% if table.name.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
 queryproc = "CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin " +
-"IF (TG_OP='INSERT'" + ') THEN INSERT INTO "{{schema.namespace.toLowerCase()}}"."h_{{table.name.toLowerCase()}}" values (default,' + "TG_OP,NOW()" +
+"IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" values (default,TG_OP,NOW()" +
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}
@@ -25,7 +25,7 @@ queryproc = "CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_t
 {%endif%}
 {% endfor %}
 "); return new;" +
-"ELSIF (TG_OP='UPDATE'" + ') THEN INSERT INTO "{{schema.namespace.toLowerCase()}}"."h_{{table.name.toLowerCase()}}" values (default,' + "TG_OP,NOW()" +
+"ELSIF (TG_OP='UPDATE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" values (default,TG_OP,NOW()" +
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}
@@ -35,7 +35,7 @@ queryproc = "CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_t
 {%endif%}
 {% endfor %}
 "); return new;" +
-"ELSIF (TG_OP='DELETE'" + ') THEN INSERT INTO "{{schema.namespace.toLowerCase()}}"."h_{{table.name.toLowerCase()}}" values (default,' + "TG_OP,NOW()" +
+"ELSIF (TG_OP='DELETE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" values (default,TG_OP,NOW()" +
 {% set kindofline="OLD" %}
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}

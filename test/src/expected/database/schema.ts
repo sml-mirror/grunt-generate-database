@@ -1,5 +1,5 @@
 import { Hero } from "../../../../../test/src/model/hero/hero";
-import {createConnection, ConnectionOptions} from "typeorm";
+import {createConnection, ConnectionOptions, Connection} from "typeorm";
 
 export async function createbase1bublic() {
     const pgp = require("pg-promise")({});
@@ -15,11 +15,16 @@ export async function createbase1bublic() {
     await pgp.end();
     return await createConnection({
     type: "postgres",
-    host:  process.env.dbhost1,
-    port: process.env.dbport1,
-    username:  process.env.dbusername1,
-    password: process.env.dbpassword1,
-    database: process.env.dbdatabase1,
+    replication: {
+          master: {
+                  host:  process.env.dbhost1,
+                  port: parseInt(process.env.dbport1),
+                  username:  process.env.dbusername1,
+                  password: process.env.dbpassword1,
+                  database: process.env.dbdatabase1
+          },
+          slaves: []
+    },
     entities: [
       Hero
 ],
@@ -28,5 +33,5 @@ export async function createbase1bublic() {
         dropSchema: true
          })
          .catch(error => console.log(error))
-         .then(connection => connection.close());
+         .then( connection => (connection as Connection).close());
 }
