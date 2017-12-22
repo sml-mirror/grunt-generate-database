@@ -1,8 +1,8 @@
 {%for databaseDeclaration in declaration%}
 {%for schema in databaseDeclaration.schemas%}
-import { create{{databaseDeclaration.name}}{{schema.namespace}} } from "./{{databaseDeclaration.name}}/{{schema.namespace}}/schema" ;
-import { create{{databaseDeclaration.name}}TriggerFuncs{{schema.namespace}} } from "./{{databaseDeclaration.name}}/{{schema.namespace}}/function" ;
-import { create{{databaseDeclaration.name}}Triggers{{schema.namespace}} } from "./{{databaseDeclaration.name}}/{{schema.namespace}}/trigger" ;
+import { create{{databaseDeclaration.name}}{{schema.namespace}} } from './{{databaseDeclaration.name}}/{{schema.namespace}}/schema' ;
+import { create{{databaseDeclaration.name}}TriggerFuncs{{schema.namespace}} } from './{{databaseDeclaration.name}}/{{schema.namespace}}/function' ;
+import { create{{databaseDeclaration.name}}Triggers{{schema.namespace}} } from './{{databaseDeclaration.name}}/{{schema.namespace}}/trigger' ;
 {%endfor%}
 {%endfor%}
 

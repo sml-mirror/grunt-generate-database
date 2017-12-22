@@ -1,29 +1,28 @@
 {%for table in schema.tables%}
-import { {{table.name}} } from "{{basePath+table.pathToModel}}";
+import { {{table.name}} } from '{{basePath+table.pathToModel}}';
 {%if table.isHistoried%}
-import { h{{table.name}} } from "{{historyPath+table.pathToModel}}";
+import { h{{table.name}} } from '{{historyPath+table.pathToModel}}';
 {% endif %}
 {% endfor %}
-import {createConnection, ConnectionOptions, Connection} from "typeorm";
+import {createConnection, ConnectionOptions, Connection} from 'typeorm';
 
 export async function create{{data.name}}{{schema.namespace}}() {
-    const pgp = require("pg-promise")({});
+    const pgp = require('pg-promise')({});
               await pgp.end();
-    var connectionString = "postgres://" + process.env.dbusername1 + ":" +
-    process.env.dbpassword1 + "@" + process.env.dbhost1 + ":" + process.env.dbport1 + "/postgres";
+    var connectionString = `postgres://${process.env.dbusername1}:${process.env.dbpassword1}@${process.env.dbhost1}:${process.env.dbport1}/postgres`;
     const db = pgp(connectionString);
-    var res = await db.oneOrNone("SELECT 1 FROM pg_database WHERE datname = " + "'" + process.env.{{data.dbdatabase}} + "'");
+    var res = await db.oneOrNone('SELECT 1 FROM pg_database WHERE datname = ' + '\'' + process.env.{{data.dbdatabase}} + '\'');
     if (res === null) {
-          var str = "CREATE DATABASE " + process.env.{{data.dbdatabase}} ;
+          var str = 'CREATE DATABASE ' + process.env.{{data.dbdatabase}} ;
           await db.query(str);
     }
     await pgp.end();
     return await createConnection({
-    type: "postgres",
+    type: 'postgres',
     replication: {
           master: {
                   host:  process.env.{{data.dbhost}},
-                  port: parseInt(process.env.{{data.dbport}}),
+                  port: parseInt(process.env.{{data.dbport}},10),
                   username:  process.env.{{data.dbusername}},
                   password: process.env.{{data.dbpassword}},
                   database: process.env.{{data.dbdatabase}}
@@ -41,7 +40,7 @@ export async function create{{data.name}}{{schema.namespace}}() {
 {%endif%}
 {%endfor%}
 ],
-        schema: "{{schema.namespace}}",
+        schema: '{{schema.namespace}}',
         synchronize: {{options.reCreate}},
         dropSchema: {{options.reCreate}}
          })
