@@ -7,43 +7,42 @@ import { h{{table.name}} } from '{{historyPath+table.pathToModel}}';
 import {createConnection, ConnectionOptions, Connection} from 'typeorm';
 
 export async function create{{data.name}}{{schema.namespace}}() {
-    const pgp = require('pg-promise')({});
-              await pgp.end();
-    var connectionString = `postgres://${process.env.dbusername1}:${process.env.dbpassword1}@${process.env.dbhost1}:${process.env.dbport1}/postgres`;
-    const db = pgp(connectionString);
-    var res = await db.oneOrNone('SELECT 1 FROM pg_database WHERE datname = ' + '\'' + process.env.{{data.dbdatabase}} + '\'');
-    if (res === null) {
-          var str = 'CREATE DATABASE ' + process.env.{{data.dbdatabase}} ;
-          await db.query(str);
-    }
-    await pgp.end();
-    return await createConnection({
-    type: 'postgres',
-    replication: {
-          master: {
+      const pgp = require('pg-promise')({});
+      await pgp.end();
+      const connectionString = `postgres://${process.env.{{data.dbusername}}}:${process.env.{{data.dbpassword}}}@${process.env.{{data.dbhost}}}:${process.env.{{data.dbport}}}/postgres`;
+      const db = pgp(connectionString);
+      const res = await db.oneOrNone('SELECT 1 FROM pg_database WHERE datname = ' + '\'' + process.env.{{data.dbdatabase}} + '\'');
+      if (res === null) {
+            var str = 'CREATE DATABASE ' + process.env.{{data.dbdatabase}} ;
+            await db.query(str);
+      }
+      await pgp.end();
+      return await createConnection({
+      type: 'postgres',
+      replication: {
+            master: {
                   host:  process.env.{{data.dbhost}},
-                  port: parseInt(process.env.{{data.dbport}},10),
+                  port: parseInt(process.env.{{data.dbport}}, 10),
                   username:  process.env.{{data.dbusername}},
                   password: process.env.{{data.dbpassword}},
                   database: process.env.{{data.dbdatabase}}
-          },
-          slaves: []
-    },
-    entities: [
+            },
+            slaves: []
+      },
+      entities: [
 {% for table in schema.tables %}
       {{table.name}}
 {% if table.isHistoried%}
-      ,h{{table.name}}
+      , h{{table.name}}
 {% endif %}
-{%if table !== schema.tables[schema.tables.length-1]%}
-,
+{%if table !== schema.tables[schema.tables.length-1]%},
 {%endif%}
 {%endfor%}
 ],
-        schema: '{{schema.namespace}}',
-        synchronize: {{options.reCreate}},
-        dropSchema: {{options.reCreate}}
-         })
-         .catch(error => console.log(error))
-         .then( connection => (connection as Connection).close());
+      schema: '{{schema.namespace}}',
+      synchronize: {{options.reCreate}},
+      dropSchema: {{options.reCreate}}
+      })
+      .catch(error => console.log(error))
+      .then( connection => (connection as Connection).close());
 }

@@ -5,10 +5,17 @@ import { create{{databaseDeclaration.name}}TriggerFuncs{{schema.namespace}} } fr
 import { create{{databaseDeclaration.name}}Triggers{{schema.namespace}} } from './{{databaseDeclaration.name}}/{{schema.namespace}}/trigger' ;
 {%endfor%}
 {%endfor%}
+import * as dotenv from 'dotenv';
 
 f();
 
 async function f() {
+
+if (process.argv.length > 2) {
+    dotenv.load({ path: process.argv[2] });
+} else {
+    dotenv.load({ path: '.env' });
+}
 {%for databaseDeclaration in declaration%}
 {%for schema in databaseDeclaration.schemas%}
 await create{{databaseDeclaration.name}}{{schema.namespace}}();
