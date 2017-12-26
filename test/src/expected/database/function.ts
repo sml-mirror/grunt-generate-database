@@ -1,4 +1,4 @@
-import {createConnection, ConnectionOptions} from "typeorm";
+import {createConnection, ConnectionOptions} from 'typeorm';
 
 
 export async function createbase1TriggerFuncsbublic() {

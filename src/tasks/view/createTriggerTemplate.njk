@@ -1,15 +1,15 @@
 {%for table in schema.tables%}
 {%if table.isHistoried%}
-import { h{{table.name}} } from "{{historyPath+table.pathToModel}}";
+import { h{{table.name}} } from '{{historyPath+table.pathToModel}}';
 {% endif %}
 {% endfor %}
-import {createConnection, ConnectionOptions} from "typeorm";
+import {createConnection, ConnectionOptions} from 'typeorm';
 
 
 export async function create{{data.name}}Triggers{{schema.namespace.toLowerCase()}}() {
-    const pgp = require("pg-promise")({});
+    const pgp = require('pg-promise')({});
     await pgp.end();
-    var connectionString = "postgres://" + process.env.{{data.dbusername}} + ":" +
+    var connectionString = 'postgres://' + process.env.{{data.dbusername}} + ":" +
     process.env.{{data.dbpassword}} + "@" + process.env.{{data.dbhost}} + ":" + process.env.{{data.dbport}} + "/" + process.env.{{data.dbdatabase}};
     const db = pgp(connectionString);
     var queryproc;
