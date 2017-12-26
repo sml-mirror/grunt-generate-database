@@ -1,6 +1,6 @@
 {
   "name": "grunt-generate-database",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Grunt task for create database generation scripts by models description",
   "private": false,
   "main": "dist/src/index.js",
@@ -12,7 +12,7 @@
     "mkdirp": "^0.5.1",
     "nunjucks": "^3.0.1",
     "path": "^0.12.7",
-    "ts-file-parser": "^0.0.1",
+    "ts-file-parser": "^0.0.3",
     "typescript": "^2.6.2"
   },
   "devDependencies": {
