@@ -20,7 +20,7 @@ describe("E2E Tests", () => {
         dbOptions.reCreate = true;
         let options = new Options();
         options.dbOptions = dbOptions;
-        options.baseModelPath = "./test/src/";
+        options.baseModelPath = "/test/src/";
         options.destinationDB = "./test/dist/dbscript";
         options.pathToDeclaration = "./test/src/declaration.json";
         CreateDbSCripts(options);

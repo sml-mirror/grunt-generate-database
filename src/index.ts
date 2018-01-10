@@ -2,7 +2,7 @@ import {CreateDbSCriptsInternal, createRelativePathInternal} from "./tasks/creat
 import {Options} from "./tasks/model/options";
 
 export function CreateDbSCripts(options: Options): void {
-    CreateDbSCriptsInternal(options);
+    CreateDbSCriptsInternal(/*options*/);
 
 }
 export function createRelativePath(basePath: string, generationPath: string): string {

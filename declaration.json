@@ -1,0 +1,41 @@
+[
+    {
+      "name" : "base1",
+      "dbtype" : "dbtype1",
+      "dbhost" : "dbhost1",
+      "dbport" : "dbport1",
+      "dbusername" : "dbusername1",
+      "dbpassword" : "dbpassword1",
+      "dbdatabase" : "dbdatabase1",
+      "pathToDBWrappers": "./test/dist/dbscript",
+      "pathToCommonModels":"./test/src/" ,
+       "pathToHistory": "./test/src/",
+      "schemas" : 
+     [
+       {
+         "namespace": "bublic",
+         "recreate":true,
+         "tables":
+         [
+           {
+             "name": "Hero", 
+             "isHistoried" : true, 
+             "pathToModel": "model/hero/hero"
+           }
+         ]
+       },
+       {
+         "namespace": "bublic1",
+         "recreate":true,
+         "tables":
+         [
+           {
+             "name": "Hero", 
+             "isHistoried" : true, 
+             "pathToModel": "model/hero/hero"
+           }
+         ]
+       }
+     ]
+   }
+ ]
