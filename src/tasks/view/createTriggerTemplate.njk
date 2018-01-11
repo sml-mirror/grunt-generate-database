@@ -9,7 +9,7 @@ import {createConnection, ConnectionOptions} from 'typeorm';
 export async function create{{data.name}}Triggers{{schema.namespace.toLowerCase()}}() {
     const pgp = require('pg-promise')({});
     await pgp.end();
-    var connectionString = 'postgres://' + process.env.{{data.dbusername}} + ":" +
+    const connectionString = 'postgres://' + process.env.{{data.dbusername}} + ":" +
     process.env.{{data.dbpassword}} + "@" + process.env.{{data.dbhost}} + ":" + process.env.{{data.dbport}} + "/" + process.env.{{data.dbdatabase}};
     const db = pgp(connectionString);
     var queryproc;

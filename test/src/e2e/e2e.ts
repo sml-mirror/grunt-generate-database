@@ -20,23 +20,21 @@ describe("E2E Tests", () => {
         dbOptions.reCreate = true;
         let options = new Options();
         options.dbOptions = dbOptions;
-        options.baseModelPath = "./test/src/";
+        options.baseModelPath = "/test/src/";
         options.destinationDB = "./test/dist/dbscript";
         options.pathToDeclaration = "./test/src/declaration.json";
         CreateDbSCripts(options);
         var fs = require("fs");
-        var res = fs.readFileSync("./test/dist/dbscript/generateDB.ts", "utf-8");
-        var exp = fs.readFileSync("./test/src/expected/database/expectedGenDb.ts", "utf-8");
+        var res = fs.readFileSync("./test/dist/dbscript/base1/bublic/trigger.ts", "utf-8");
+        var exp = fs.readFileSync("./test/src/expected/database/trigger.ts", "utf-8");
         expect(res).be.equal(exp);
         res = fs.readFileSync("./test/dist/dbscript/base1/bublic/function.ts", "utf-8");
         exp = fs.readFileSync("./test/src/expected/database/function.ts", "utf-8");
         expect(res).be.equal(exp);
-        res = fs.readFileSync("./test/dist/dbscript/base1/bublic/schema.ts", "utf-8");
-        exp = fs.readFileSync("./test/src/expected/database/schema.ts", "utf-8");
+        res = fs.readFileSync("./test/dist/dbscript/base1/bublic/generatebublicDBWrapper.ts", "utf-8");
+        exp = fs.readFileSync("./test/src/expected/database/generatebublicDBWrapper.ts", "utf-8");
         expect(res).be.equal(exp);
-        res = fs.readFileSync("./test/dist/dbscript/base1/bublic/trigger.ts", "utf-8");
-        exp = fs.readFileSync("./test/src/expected/database/trigger.ts", "utf-8");
-        expect(res).be.equal(exp);
+
         done();
       });
 

@@ -9,5 +9,8 @@ public dbport: number;
 public dbusername: string;
 public dbpassword: string;
 public dbdatabase: string;
+public pathToDBWrappers: string;
 public schemas: Schema[];
+public pathToHistory: string;
+public pathToCommonModels: string;
 }

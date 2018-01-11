@@ -34,7 +34,8 @@
     "ts-file-parser": "^0.0.2",
     "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
-    "typeorm": "0.2.0-alpha.13"
+    "typeorm": "0.2.0-alpha.13",
+    "dotenv": "^4.0.0"
   },
   "repository": {
     "type": "git",

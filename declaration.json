@@ -7,15 +7,19 @@
       "dbusername" : "dbusername1",
       "dbpassword" : "dbpassword1",
       "dbdatabase" : "dbdatabase1",
-     "schemas" : 
+      "pathToDBWrappers": "./test/dist/dbscript",
+      "pathToCommonModels":"./test/src/" ,
+       "pathToHistory": "./test/src/",
+      "schemas" : 
      [
        {
          "namespace": "bublic",
+         "recreate":true,
          "tables":
          [
            {
              "name": "Hero", 
-             "isHistoried" : false, 
+             "isHistoried" : true, 
              "pathToModel": "model/hero/hero"
            }
          ]
