@@ -10,6 +10,6 @@ export class Hero {
     public data: string;
     @Column()
     public detailId?: number;
-    @Column({"type": "integer", "array": true})
+    @Column({"type": "integer", "array": true, "nullable": true})
     public simpleArray: number[];
 }

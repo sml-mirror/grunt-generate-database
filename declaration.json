@@ -23,18 +23,6 @@
              "pathToModel": "model/hero/hero"
            }
          ]
-       },
-       {
-         "namespace": "bublic1",
-         "recreate":true,
-         "tables":
-         [
-           {
-             "name": "Hero", 
-             "isHistoried" : true, 
-             "pathToModel": "model/hero/hero"
-           }
-         ]
        }
      ]
    }
