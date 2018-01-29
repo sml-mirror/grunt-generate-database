@@ -4,17 +4,17 @@ import {createConnection, ConnectionOptions} from 'typeorm';
 export async function create{{data.name}}TriggerFuncs{{schema.namespace.toLowerCase()}}() {
 const pgp = require('pg-promise')({});
 await pgp.end();
-const connectionString = "postgres://" + process.env.{{data.dbusername}} + ":" +
-process.env.{{data.dbpassword}} + "@" + process.env.{{data.dbhost}} + ":" + process.env.{{data.dbport}} + "/" + process.env.{{data.dbdatabase}};
+const connectionString = 'postgres://' + process.env.{{data.dbusername}} + ':' +
+process.env.{{data.dbpassword}} + '@' + process.env.{{data.dbhost}} + ':' + process.env.{{data.dbport}} + '/' + process.env.{{data.dbdatabase}};
 
 const db = pgp(connectionString);
-let queryproc = "";
+let queryproc = '';
 {%for table in schema.tables%}
 {% if table.isHistoried %}
 {%for class in hStr.classes%}
 {% if table.name.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
-queryproc = "CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin " +
+queryproc = 'CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin ' +
 `IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" values (default,TG_OP,NOW()` +
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}

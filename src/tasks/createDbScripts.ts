@@ -49,7 +49,7 @@ function CreateDBCreator(declarations: Declaration[]): void {
                 var mkdirp = require("mkdirp");
                 var getDirName = require("path").dirname;
                 var fileName = declaration.pathToDBWrappers  + "/" +  declaration.name + "/" + declaration.schemas[i].namespace +
-                `/generate${declaration.schemas[i].namespace}DBWrapper.ts`;
+                `/${declaration.schemas[i].namespace}DBWrapper.ts`;
                 mkdirp.sync(getDirName(fileName));
                 fs.writeFileSync(fileName, rendererTemplate, "utf-8");
             }
