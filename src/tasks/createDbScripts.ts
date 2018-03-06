@@ -77,7 +77,13 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                     stringFile += fs.readFileSync(pathtoHistory, "utf-8");
                 }
             }
-            var jsonStructure = parseStruct(stringFile, {}, "");
+            var jsonStructure;
+            if( (opt && opt.hasViewModels) || declarations[index].hasViewModels) {
+                var correctStringFile  = ViewModelTypeCorrecting(stringFile);
+                jsonStructure = parseStruct(correctStringFile, {}, "");               
+            } else {
+                jsonStructure = parseStruct(stringFile, {}, "");
+            }
             CreateFileForTriggersCreateForSchema(declarations[index], jsonStructure , schms[innerIndex]);
             stringFile = "";
         }
@@ -136,4 +142,21 @@ export function createRelativePathInternal (basePath: string , commonScriptPath:
         pathLocal += baseFolders[index] + "/";
     }
    return pathLocal;
+}
+
+function ViewModelTypeCorrecting(input) {
+    let firstViewModelTypeInArray = input.split("@ViewModelType");
+    let result = firstViewModelTypeInArray.map( str => {
+        let tmpStr =  str.trim();
+        let viewModelTypeDecoratorRegExp = /\(\s?{\s*?["']type["']\s?:\s?\w+/;
+        let matches = viewModelTypeDecoratorRegExp.exec(tmpStr);
+        if(matches) {
+            let need = matches[0]
+            let matchRegExp = /[A-Z]\w+/;
+            let innerMatches = matchRegExp.exec(need);
+            return str.replace(innerMatches[0],`"${innerMatches[0]}"`);   
+        }
+        return str;
+    }).join("@ViewModelType");
+    return result;
 }

@@ -4,6 +4,7 @@ export class Options {
     public pathToHistory: string;
     public baseModelPath: string;
     public destinationDB: string;
+    public hasViewModels: boolean;
 }
 export class DbOptions {
     public type: string;

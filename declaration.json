@@ -9,7 +9,8 @@
       "dbdatabase" : "dbdatabase1",
       "pathToDBWrappers": "./test/dist/dbscript",
       "pathToCommonModels":"./test/src/" ,
-       "pathToHistory": "./test/src/",
+      "pathToHistory": "./test/src/",
+      "hasViewModels": true,
       "schemas" : 
      [
        {
