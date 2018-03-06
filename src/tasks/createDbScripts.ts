@@ -78,9 +78,9 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 }
             }
             var jsonStructure;
-            if( (opt && opt.hasViewModels) || declarations[index].hasViewModels) {
+            if ((opt && opt.hasViewModels) || declarations[index].hasViewModels) {
                 var correctStringFile  = ViewModelTypeCorrecting(stringFile);
-                jsonStructure = parseStruct(correctStringFile, {}, "");               
+                jsonStructure = parseStruct(correctStringFile, {}, "");
             } else {
                 jsonStructure = parseStruct(stringFile, {}, "");
             }
@@ -144,17 +144,17 @@ export function createRelativePathInternal (basePath: string , commonScriptPath:
    return pathLocal;
 }
 
-function ViewModelTypeCorrecting(input) {
+function ViewModelTypeCorrecting(input: string): string {
     let firstViewModelTypeInArray = input.split("@ViewModelType");
     let result = firstViewModelTypeInArray.map( str => {
         let tmpStr =  str.trim();
         let viewModelTypeDecoratorRegExp = /\(\s?{\s*?["']type["']\s?:\s?\w+/;
         let matches = viewModelTypeDecoratorRegExp.exec(tmpStr);
-        if(matches) {
-            let need = matches[0]
+        if (matches) {
+            let need = matches[0];
             let matchRegExp = /[A-Z]\w+/;
             let innerMatches = matchRegExp.exec(need);
-            return str.replace(innerMatches[0],`"${innerMatches[0]}"`);   
+            return str.replace(innerMatches[0], `"${innerMatches[0]}"`);
         }
         return str;
     }).join("@ViewModelType");
