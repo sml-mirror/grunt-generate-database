@@ -154,7 +154,7 @@ function ViewModelTypeCorrecting(input: string): string {
             let need = matches[0];
             let matchRegExp = /[A-Z]\w+/;
             let innerMatches = matchRegExp.exec(need);
-            tmpStr =tmpStr.replace(innerMatches[0], `"${innerMatches[0]}"`);
+            tmpStr = tmpStr.replace(innerMatches[0], `"${innerMatches[0]}"`);
         }
         let viewModelTypeDecoratorForTransformer = /["']function["']\s?:\s?\w+(\.)?(\w+)?/;
         let secMatches = viewModelTypeDecoratorForTransformer.exec(tmpStr);
