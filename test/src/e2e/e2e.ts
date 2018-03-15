@@ -23,7 +23,7 @@ describe("E2E Tests", () => {
         options.baseModelPath = "/test/src/";
         options.destinationDB = "./test/dist/dbscript";
         options.pathToDeclaration = "./test/src/declaration.json";
-        CreateDbSCripts(options);
+        CreateDbSCripts();
         var fs = require("fs");
         var res = fs.readFileSync("./test/dist/dbscript/base1/bublic/trigger.ts", "utf-8");
         var exp = fs.readFileSync("./test/src/expected/database/trigger.ts", "utf-8");
