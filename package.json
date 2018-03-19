@@ -34,7 +34,7 @@
     "mocha": "^3.5.0",
     "pg": "^7.4.0",
     "pg-promise": "^6.10.3",
-    "ts-file-parser": "^0.0.10",
+    "ts-file-parser": "0.0.10",
     "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
     "typeorm": "0.2.0-alpha.13"
