@@ -1,7 +1,9 @@
 
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { GenerateHistory } from "grunt-generate-history-model";
 
 @Entity()
+@GenerateHistory({"historyPath": "./test/src/model/hero"})
 export class Hero {
     @PrimaryGeneratedColumn()
     public id?: number;

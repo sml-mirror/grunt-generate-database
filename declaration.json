@@ -8,9 +8,6 @@
       "dbpassword" : "dbpassword1",
       "dbdatabase" : "dbdatabase1",
       "pathToDBWrappers": "./test/dist/dbscript",
-      "pathToCommonModels":"./test/src/" ,
-      "pathToHistory": "./test/src/",
-      "hasViewModels": true,
       "schemas" : 
      [
        {
@@ -20,8 +17,7 @@
          [
            {
              "name": "Hero", 
-             "isHistoried" : true, 
-             "pathToModel": "model/hero/hero"
+             "pathToModel": "./test/src/model/hero/hero"
            }
          ]
        }

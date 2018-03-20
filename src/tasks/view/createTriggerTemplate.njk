@@ -1,6 +1,6 @@
 {%for table in schema.tables%}
-{%if table.isHistoried%}
-import { h{{table.name}} } from '{{historyPath+table.pathToModel}}';
+{%if table.historyPath%}
+import { h{{table.name}} } from '{{table.historyPath}}';
 {% endif %}
 {% endfor %}
 import {createConnection, ConnectionOptions} from 'typeorm';
@@ -16,7 +16,7 @@ export async function create{{data.name}}Triggers{{schema.namespace.toLowerCase(
     let lowerStringName;
     let lowewrStringSchema;
 {%for table in schema.tables%}
-{% if table.isHistoried %}
+{% if table.historyPath %}
     lowerStringName = '{{table.name}}'.toLowerCase();
     lowewrStringSchema = '{{schema.namespace}}'.toLowerCase();
     queryproc = 'create trigger add_to_' + lowewrStringSchema + '_h_' + lowerStringName + ' after insert or delete or update on "' +

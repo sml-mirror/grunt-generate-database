@@ -3,7 +3,7 @@
 import * as fs from "fs";
 import {} from "mocha";
 import {expect} from "chai";
-import {CreateDbSCripts, createRelativePath} from "../../../src/index";
+import {CreateDbSCripts} from "../../../src/index";
 import {Options, DbOptions} from "../../../src/tasks/model/options";
 
 

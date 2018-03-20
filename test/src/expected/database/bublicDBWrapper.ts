@@ -1,5 +1,5 @@
-import { Hero } from '../../../../../test/src/model/hero/hero';
-import { hHero } from '../../../../../test/src/model/hero/hero';
+import { Hero } from '../../../../src/model/hero/hero';
+import { hHero } from '../../../../src/model/hero/hero';
 import { createbase1TriggerFuncsbublic } from './function';
 import { createbase1Triggersbublic } from './trigger';
 import * as dotenv from 'dotenv';

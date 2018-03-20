@@ -22,8 +22,7 @@ function CreateFileForTriggersCreateForSchema(declaration: Declaration, historyS
         fs.writeFileSync(fileName, rendererTemplate, "utf-8");
     }
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
-    rendererTemplate = render("createTriggerTemplate.njk", {data: declaration,
-            historyPath: createRelativePathInternal(declaration.pathToHistory, declaration.pathToDBWrappers), schema: schema});
+    rendererTemplate = render("createTriggerTemplate.njk", {data: declaration, schema: schema});
     if (rendererTemplate && rendererTemplate.trim()) {
         fs = require("fs");
         mkdirp = require("mkdirp");
@@ -39,10 +38,6 @@ function CreateDBCreator(declarations: Declaration[]): void {
         let scriptFolder = path.resolve(__dirname, "view/");
         configure(scriptFolder, {autoescape: true, trimBlocks: true});
         for (let i = 0 ; i < declaration.schemas.length; i++) {
-            const basePathToCommonModel = declaration.pathToCommonModels;
-            const pathToHistory = declaration.pathToHistory;
-            declaration.pathToCommonModels = createRelativePathInternal(declaration.pathToCommonModels, declaration.pathToDBWrappers);
-            declaration.pathToHistory = createRelativePathInternal(declaration.pathToHistory, declaration.pathToDBWrappers);
             var rendererTemplate = render("createDBWrapper.njk", {declaration: declaration, index: i});
             if (rendererTemplate && rendererTemplate.trim()) {
                 var fs = require("fs");
@@ -53,8 +48,6 @@ function CreateDBCreator(declarations: Declaration[]): void {
                 mkdirp.sync(getDirName(fileName));
                 fs.writeFileSync(fileName, rendererTemplate, "utf-8");
             }
-            declaration.pathToCommonModels = basePathToCommonModel;
-            declaration.pathToHistory = pathToHistory;
         }
     });
 }
@@ -65,21 +58,43 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
     const jsonDeclarations  = fs.readFileSync(pathToDeclaration, "utf-8");
     var declarations  = <Declaration[]>JSON.parse(jsonDeclarations);
     let stringFile = "";
+
     for (let index = 0; index < declarations.length; index++) {
         let schms = declarations[index].schemas;
+        let jsonStructure: Module = null;
+        schms.forEach(schema => {
+            schema.tables.forEach(table => {
+                let fileContent: string = fs.readFileSync(table.pathToModel + ".ts", "utf-8");
+                jsonStructure = parseStruct(fileContent, {}, "");
+                jsonStructure.classes.forEach(_class => {
+                    _class.decorators.forEach(dec => {
+                        if (dec.name === "GenerateHistory" && _class.name.toLowerCase() === table.name.toLowerCase()) {
+                            table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/" +_class.name.toLowerCase();
+                        }
+                    });
+                });
+            });
+        });
+
         for (var innerIndex = 0; innerIndex < schms.length; innerIndex++) {
             for (var tableIndex = 0; tableIndex < schms[innerIndex].tables.length; tableIndex++) {
                 var table = schms[innerIndex].tables[tableIndex];
-                var pathtobaseModel = declarations[index].pathToCommonModels + table.pathToModel + ".ts";
+                var pathtobaseModel = table.pathToModel + ".ts";
                 stringFile += fs.readFileSync(pathtobaseModel, "utf-8");
-                if (declarations[index].pathToHistory && table.isHistoried) {
-                    var pathtoHistory = declarations[index].pathToHistory +  table.pathToModel + ".ts";
+                if (table.historyPath) {
+                    var pathtoHistory = table.historyPath + ".ts";
                     stringFile += fs.readFileSync(pathtoHistory, "utf-8");
                 }
             }
-            var jsonStructure;
-            jsonStructure = parseStruct(stringFile, {}, "");
-            CreateFileForTriggersCreateForSchema(declarations[index], jsonStructure , schms[innerIndex]);
+            schms[innerIndex].tables.forEach(table => {
+                let tmpPathtoDBWrappers = declarations[index].pathToDBWrappers + "/" + declarations[index].name + "/" + schms[innerIndex].namespace;
+                if(table.historyPath) {
+                    table.historyPath = require("path").relative(tmpPathtoDBWrappers, table.historyPath).split("\\").join("/");
+                }
+                table.pathToModel = require("path").relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
+            });
+            let json = parseStruct(stringFile, {}, "");
+            CreateFileForTriggersCreateForSchema (declarations[index], json , schms[innerIndex]);
             stringFile = "";
         }
     }
@@ -100,41 +115,5 @@ export function CreateInitOptionsByGrunt(grunt: IGrunt ): Options {
     opt.pathToDeclaration = grunt.task.current.data.pathToDeclaration;
     opt.baseModelPath = grunt.task.current.data.baseModelPath;
     opt.destinationDB = grunt.task.current.data.destinationDB;
-    opt.pathToHistory = grunt.task.current.data.pathToHistory;
     return opt;
-}
-
-export function createRelativePathInternal (basePath: string , commonScriptPath: string ): string {
-    if (basePath === undefined) {
-        return null;
-    }
-    let pathLocal: string;
-    pathLocal = "../../../";
-    let commonFolder = "";
-    let cIndex = -1;
-    let breakPoint = false;
-    let pointCount = 0;
-    var baseFolders = basePath.split("/");
-    var commonScriptFolders = commonScriptPath.split("/");
-    for ( let folderIndex = commonScriptFolders.length - 1; folderIndex >= 0; folderIndex--) {
-        for ( let genfolderIndex = baseFolders.length - 1;  genfolderIndex >= 0;  genfolderIndex--) {
-            if (baseFolders[genfolderIndex] === commonScriptFolders[folderIndex]) {
-                pointCount = commonScriptFolders.length - 1  - folderIndex;
-                commonFolder = baseFolders[genfolderIndex];
-                cIndex = folderIndex;
-                breakPoint = true;
-                break;
-            }
-        }
-        if (breakPoint) {
-            break;
-        }
-    }
-    for (let pInd = 0; pInd < pointCount; pInd++ ) {
-        pathLocal += "../";
-    }
-    for ( let index = cIndex; index < baseFolders.length - 1; index++) {
-        pathLocal += baseFolders[index] + "/";
-    }
-   return pathLocal;
 }

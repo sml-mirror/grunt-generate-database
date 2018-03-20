@@ -11,7 +11,4 @@ public dbpassword: string;
 public dbdatabase: string;
 public pathToDBWrappers: string;
 public schemas: Schema[];
-public pathToHistory: string;
-public pathToCommonModels: string;
-public hasViewModels: boolean;
 }

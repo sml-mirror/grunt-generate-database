@@ -1,4 +1,4 @@
-import { hHero } from '../../../../../test/src/model/hero/hero';
+import { hHero } from '../../../../src/model/hero/hero';
 import {createConnection, ConnectionOptions} from 'typeorm';
 
 

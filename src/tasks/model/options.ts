@@ -1,7 +1,6 @@
 export class Options {
     public dbOptions: DbOptions;
     public pathToDeclaration: string;
-    public pathToHistory: string;
     public baseModelPath: string;
     public destinationDB: string;
     public hasViewModels: boolean;

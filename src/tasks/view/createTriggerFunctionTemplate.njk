@@ -10,7 +10,7 @@ process.env.{{data.dbpassword}} + '@' + process.env.{{data.dbhost}} + ':' + proc
 const db = pgp(connectionString);
 let queryproc = '';
 {%for table in schema.tables%}
-{% if table.isHistoried %}
+{% if table.historyPath %}
 {%for class in hStr.classes%}
 {% if table.name.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
