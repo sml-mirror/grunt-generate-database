@@ -69,7 +69,7 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 jsonStructure.classes.forEach(_class => {
                     _class.decorators.forEach(dec => {
                         if (dec.name === "GenerateHistory" && _class.name.toLowerCase() === table.name.toLowerCase()) {
-                            table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/" +_class.name.toLowerCase();
+                            table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/" + _class.name.toLowerCase();
                         }
                     });
                 });
@@ -88,7 +88,7 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
             }
             schms[innerIndex].tables.forEach(table => {
                 let tmpPathtoDBWrappers = declarations[index].pathToDBWrappers + "/" + declarations[index].name + "/" + schms[innerIndex].namespace;
-                if(table.historyPath) {
+                if (table.historyPath) {
                     table.historyPath = require("path").relative(tmpPathtoDBWrappers, table.historyPath).split("\\").join("/");
                 }
                 table.pathToModel = require("path").relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
