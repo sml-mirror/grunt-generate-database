@@ -69,4 +69,4 @@ export class Hero {
   
 * npm run generation
 
-* после завершения работы плагина по пути,указанному в declaration.json ,появятся файлы с расширением ".ts" :
+* после завершения работы плагина по пути,указанному в declaration.json в свойстве "pathToDBWrappers" ,появятся файлы с расширением ".ts" :
