@@ -37,6 +37,7 @@
    }
  ]
 ``` 
+* Установите декораты на нужные модели.
 ```typescripts
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import { GenerateHistory } from "grunt-generate-history-model";
