@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/AbatapCompany/grunt-generate-history-model.svg?branch=master)](https://travis-ci.org/AbatapCompany/grunt-generate-database)
 
-Репозиторий ,который хранит в себе плагин для создания DBWrapper,триггера и функции управления триггером с помощью typeorm и postgres
+Репозиторий, который хранит в себе плагин для создания DBWrapper,триггера и функции управления триггером с помощью typeorm и postgres
 # Установка
 
   npm install grunt-generate-database
@@ -56,7 +56,7 @@ export class Hero {
     public simpleArray: number[];
 }
 ```
-* В package.json добавьте инициализирующую команду в свойство "script":
+* В package.json добавьте инициализирующую команду в свойство "scripts":
 ```json
   "scripts": {
     "generation": "generateDatabase"
@@ -66,7 +66,7 @@ export class Hero {
   
 * npm run generation
 
-* после завершения работы плагина по пути,указанному в declaration.json в свойстве "pathToDBWrappers" ,появятся файлы с расширением ".ts" :
+* после завершения работы плагина по пути, указанному в declaration.json в свойстве "pathToDBWrappers", появятся файлы с расширением ".ts" :
     * DBWrapper
  ```typescripts
  import { Class } from '../../../models/class';
