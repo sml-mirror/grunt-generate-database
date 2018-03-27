@@ -8,7 +8,7 @@
   npm install grunt-generate-database
   
 # Как начать использовать
-* Создайте declaration.json в корневом катологе
+* Создайте declaration.json в корневом каталоге
 ```json
 [
     {
