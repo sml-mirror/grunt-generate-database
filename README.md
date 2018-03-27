@@ -2,13 +2,12 @@
 
 [![Build Status](https://travis-ci.org/AbatapCompany/grunt-generate-history-model.svg?branch=master)](https://travis-ci.org/AbatapCompany/grunt-generate-database)
 
-This repository provides a grunt plugin for code generation database creation scripts by models description with typeorm and postgres
-
+Репозиторий ,который хранит в себе плагин для создания DBWrapper,триггера и функции управления триггером с помощью typeorm и postgres
 # Установка
 
   npm install grunt-generate-database
   
-# Begin to use
+# Как начать использовать
 * Создайте declaration.json в корневом катологе
 ```json
 [
@@ -38,9 +37,6 @@ This repository provides a grunt plugin for code generation database creation sc
    }
  ]
 ``` 
-* Элементом массива является описание отдельной базы данных
-* Свойства с префиксом db являются параметрами подключения к базе
-*
 ```typescripts
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import { GenerateHistory } from "grunt-generate-history-model";
@@ -70,3 +66,11 @@ export class Hero {
 * npm run generation
 
 * после завершения работы плагина по пути,указанному в declaration.json в свойстве "pathToDBWrappers" ,появятся файлы с расширением ".ts" :
+# Примечания к файлу конфигурации
+
+* Элементом массива является описание отдельной базы данных
+* Свойства с префиксом db являются параметрами подключения к базе
+* namespace отображает имя схемы в базе данных
+* Массив tables показывает какие таблицы будут использоваться при работе со схемой
+* У каждого элемента table существует опциональное поле historyPath, которое показывает есть ли у модели модель логирования.
+* Желательно для создания моделей логирования использовать npm пакет grunt-generate-history-model[(https://github.com/AbatapCompany/grunt-generate-history-model)] и его декораторы,а не созданные вручную модели логирования
