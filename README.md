@@ -66,7 +66,7 @@ export class Hero {
 * npm run generation
 
 * после завершения работы плагина по пути,указанному в declaration.json в свойстве "pathToDBWrappers" ,появятся файлы с расширением ".ts" :
-   * DBWrapper
+    * DBWrapper
  ```typescripts
  import { Class } from '../../../models/class';
 import { createbase1TriggerFuncstestnamespace } from './function';
@@ -129,7 +129,7 @@ export class testnamespaceDBWrapper {
     }
 }
  ```
-  * Триггерная функция(пустая в примере в связи с отсутствием модели логирования)
+    * Триггерная функция(пустая в примере в связи с отсутствием модели логирования)
 ```typescript
 import {createConnection, ConnectionOptions} from 'typeorm';
 
@@ -146,7 +146,7 @@ pgp.end();
 
 }
 ```
-  * Триггер
+    * Триггер
 ``` typescript
 import {createConnection, ConnectionOptions} from 'typeorm';
 
