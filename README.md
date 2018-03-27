@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/AbatapCompany/grunt-generate-history-model.svg?branch=master)](https://travis-ci.org/AbatapCompany/grunt-generate-database)
 
-Репозиторий, который хранит в себе плагин для создания DBWrapper,триггера и функции управления триггером с помощью typeorm и postgres
+Репозиторий, который хранит в себе плагин для создания DBWrapper, триггера и функции управления триггером с помощью typeorm и postgres
 # Установка
 
   npm install grunt-generate-database
