@@ -9,7 +9,7 @@ import {parseStruct, Module} from "ts-file-parser";
 import * as path from "path";
 
 function CreateFileForTriggersCreateForSchema(declaration: Declaration, historyStruct: Module, schema: Schema): void {
-    let scriptFolder = path.resolve(__dirname, "view/");
+    let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createTriggerFunctionTemplate.njk", {data: declaration, hStr: historyStruct,
             schema: schema});
@@ -35,7 +35,7 @@ function CreateFileForTriggersCreateForSchema(declaration: Declaration, historyS
 
 function CreateDBCreator(declarations: Declaration[]): void {
     declarations.forEach( declaration => {
-        let scriptFolder = path.resolve(__dirname, "view/");
+        let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
         configure(scriptFolder, {autoescape: true, trimBlocks: true});
         for (let i = 0 ; i < declaration.schemas.length; i++) {
             var rendererTemplate = render("createDBWrapper.njk", {declaration: declaration, index: i});
@@ -94,7 +94,9 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 table.pathToModel = require("path").relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
             });
             let json = parseStruct(stringFile, {}, "");
-            CreateFileForTriggersCreateForSchema (declarations[index], json , schms[innerIndex]);
+            if (declarations[index].db === "postgres") {
+                CreateFileForTriggersCreateForSchema (declarations[index], json , schms[innerIndex]);
+            }
             stringFile = "";
         }
     }

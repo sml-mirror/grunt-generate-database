@@ -1,0 +1,70 @@
+{%for table in declaration.schemas[index].tables%}
+import { {{table.name}} } from '{{table.pathToModel}}';
+{%if table.historyPath%}
+import { h{{table.name}} } from '{{table.historyPath}}';
+{% endif %}
+{% endfor %}
+import * as dotenv from 'dotenv';
+import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
+
+export class {{declaration.schemas[index].namespace}}DBWrapper {
+
+    private static connection: Connection;
+
+    public static async initialize(dropSchema?: boolean, sync?: boolean): Promise<void> {
+        await this.close();
+
+        if (! dropSchema) {
+            dropSchema = false;
+        }
+        if (! sync) {
+            sync = false;
+        }
+
+        this.connection = await this.createTables(dropSchema, sync);
+    }
+
+    private static async createTables(dropSchema?: boolean, sync?: boolean) {
+        return await createConnection({
+              name: '{{declaration.schemas[index].namespace}}'
+            , type: 'mongodb'
+{% if declaration.dbhost%}
+            , host:  process.env.{{declaration.dbhost}}
+{% endif %}
+{% if declaration.dbport%}
+            , port: parseInt(process.env.{{declaration.dbport}}, 10)
+{% endif %}
+{% if declaration.dbusername%}
+            , username:  process.env.{{declaration.dbusername}}
+{% endif %}
+{% if declaration.dbpassword%}
+            ,password: process.env.{{declaration.dbpassword}}
+{% endif %}
+{% if declaration.dbdatabase%}
+            , database: process.env.{{declaration.dbdatabase}}
+{% endif  %}
+            , entities: [
+{% for table in declaration.schemas[index].tables %}
+            {{table.name}}
+{% if table.historyPath%}
+            , h{{table.name}}
+{% endif %}
+{%if table !== declaration.schemas[index].tables[declaration.schemas[index].tables.length-1]%},
+{%endif%}
+{%endfor%}
+            ]
+            , synchronize: sync
+            , dropSchema: dropSchema
+      });
+    }
+    public static getEntityManager (): EntityManager {
+        return getManager('{{declaration.schemas[index].namespace}}');
+    }
+
+    public static async close(): Promise<void> {
+        if (this.connection) {
+            await this.connection.close();
+            this.connection = null;
+        }
+    }
+}

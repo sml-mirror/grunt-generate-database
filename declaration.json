@@ -1,5 +1,6 @@
 [
     {
+      "db":"postgres",
       "name" : "base1",
       "dbtype" : "dbtype1",
       "dbhost" : "dbhost1",
@@ -12,6 +13,31 @@
      [
        {
          "namespace": "bublic",
+         "recreate":true,
+         "tables":
+         [
+           {
+             "name": "Hero", 
+             "pathToModel": "./test/src/model/hero/hero"
+           }
+         ]
+       }
+     ]
+   },
+   {
+      "db":"mongo",
+      "name" : "base1",
+      "dbtype" : "dbtype1",
+      "dbhost" : "dbhost1",
+      "dbport" : "dbport1",
+      "dbusername" : "dbusername1",
+      "dbpassword" : "dbpassword1",
+      "dbdatabase" : "dbdatabase1",
+      "pathToDBWrappers": "./test/dist/dbscript",
+      "schemas" : 
+     [
+       {
+         "namespace": "mongo",
          "recreate":true,
          "tables":
          [

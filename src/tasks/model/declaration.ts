@@ -1,7 +1,7 @@
 import {Schema} from "./schema";
 
 export class Declaration {
-
+public db: string;
 public name: string;
 public dbtype: string;
 public dbhost: string;

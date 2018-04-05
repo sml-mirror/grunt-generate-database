@@ -34,6 +34,9 @@ describe("E2E Tests", () => {
         res = fs.readFileSync("./test/dist/dbscript/base1/bublic/bublicDBWrapper.ts", "utf-8");
         exp = fs.readFileSync("./test/src/expected/database/bublicDBWrapper.ts", "utf-8");
         expect(res).be.equal(exp);
+        res = fs.readFileSync("./test/dist/dbscript/base1/mongo/mongoDBWrapper.ts", "utf-8");
+        exp = fs.readFileSync("./test/src/expected/nosqldatabase/mongoDBWrapper.ts", "utf-8");
+        expect(res).be.equal(exp);
 
         done();
       });
