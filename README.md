@@ -12,6 +12,7 @@
 ```json
 [
     {
+      "db": "postgres"
       "name" : "base1",
       "dbtype" : "dbtype1",
       "dbhost" : "dbhost1",
