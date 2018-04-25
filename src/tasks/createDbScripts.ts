@@ -69,7 +69,8 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 jsonStructure.classes.forEach(_class => {
                     _class.decorators.forEach(dec => {
                         if (dec.name === "GenerateHistory" && _class.name.toLowerCase() === table.name.toLowerCase()) {
-                            table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/" + _class.name.toLowerCase();
+                            table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/"
+                                                + _class.name.charAt(0).toLowerCase() + _class.name.slice(1);
                         }
                     });
                 });
