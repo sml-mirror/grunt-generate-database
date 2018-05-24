@@ -13,11 +13,9 @@
      [
        {
          "namespace": "bublic",
-         "recreate":true,
          "tables":
          [
            {
-             "name": "Hero", 
              "pathToModel": "./test/src/model/hero/hero"
            }
          ]
@@ -38,11 +36,9 @@
      [
        {
          "namespace": "mongo",
-         "recreate":true,
          "tables":
          [
            {
-             "name": "Hero", 
              "pathToModel": "./test/src/model/hero/hero"
            }
          ]

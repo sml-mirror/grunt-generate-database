@@ -1,5 +1,5 @@
-import { Hero } from '../../../../src/model/hero/hero';
-import { hHero } from '../../../../src/model/hero/hero';
+import { y_hero } from '../../../../src/model/hero/hero';
+import { hy_hero } from '../../../../src/model/hero/hero';
 import * as dotenv from 'dotenv';
 import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
 
@@ -30,8 +30,8 @@ export class mongoDBWrapper {
             ,password: process.env.dbpassword1
             , database: process.env.dbdatabase1
             , entities: [
-            Hero
-            , hHero
+            y_hero
+            , hy_hero
             ]
             , synchronize: sync
             , dropSchema: dropSchema

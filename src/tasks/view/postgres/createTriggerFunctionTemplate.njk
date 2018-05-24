@@ -12,7 +12,7 @@ let queryproc = '';
 {%for table in schema.tables%}
 {% if table.historyPath %}
 {%for class in hStr.classes%}
-{% if table.name.toLowerCase() === class.name.toLowerCase().slice(1) %}
+{% if table.modelName.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
 queryproc = 'CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin ' +
 `IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" values (default,TG_OP,NOW()` +

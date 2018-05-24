@@ -10,13 +10,13 @@ export async function createbase1Triggersbublic() {
     const db = pgp(connectionString);
     let queryproc;
     let lowerStringName;
-    let lowewrStringSchema;
-    lowerStringName = 'Hero'.toLowerCase();
-    lowewrStringSchema = 'bublic'.toLowerCase();
-    queryproc = 'create trigger add_to_' + lowewrStringSchema + '_h_' + lowerStringName + ' after insert or delete or update on "' +
-    lowewrStringSchema + '"."' + lowerStringName +
-    '" for each row execute procedure ' + lowewrStringSchema +
-    '.add_to_history_' + lowewrStringSchema + '_' + lowerStringName + '();';
+    let lowerStringSchema;
+    lowerStringName = 'y_hero'.toLowerCase();
+    lowerStringSchema = 'bublic'.toLowerCase();
+    queryproc = 'create trigger add_to_' + lowerStringSchema + '_h_' + lowerStringName + ' after insert or delete or update on "' +
+    lowerStringSchema + '"."' + lowerStringName +
+    '" for each row execute procedure ' + lowerStringSchema +
+    '.add_to_history_' + lowerStringSchema + '_' + lowerStringName + '();';
     await db.none(queryproc);
     pgp.end();
 }

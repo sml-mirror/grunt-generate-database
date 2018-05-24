@@ -67,8 +67,16 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 let fileContent: string = fs.readFileSync(table.pathToModel + ".ts", "utf-8");
                 jsonStructure = parseStruct(fileContent, {}, "");
                 jsonStructure.classes.forEach(_class => {
+                    table.modelName = _class.name;
                     _class.decorators.forEach(dec => {
-                        if (dec.name === "GenerateHistory" && _class.name.toLowerCase() === table.name.toLowerCase()) {
+                        if (dec.name === "Entity") {
+                            if ( dec.arguments.length > 0) {
+                                table.name = dec.arguments[0] as string;
+                            } else {
+                                table.name = _class.name.toLowerCase();
+                            }
+                        }
+                        if (dec.name === "GenerateHistory" && _class.name.toLowerCase() === table.modelName.toLowerCase()) {
                             table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/"
                                                 + _class.name.charAt(0).toLowerCase() + _class.name.slice(1);
                         }
