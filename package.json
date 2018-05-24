@@ -1,6 +1,6 @@
 {
   "name": "grunt-generate-database",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Grunt task for create database generation scripts by models description",
   "private": false,
   "main": "dist/src/index.js",
@@ -35,6 +35,7 @@
     "mocha": "3.5.0",
     "pg": "7.4.0",
     "pg-promise": "6.10.3",
+    "reflect-metadata": "0.1.12",
     "ts-file-parser": "0.0.12",
     "ts-node": "3.3.0",
     "tslint": "5.8.0",
