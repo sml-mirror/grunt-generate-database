@@ -1,5 +1,7 @@
-import {createConnection, ConnectionOptions} from 'typeorm';
+/*Codegen*/
+// tslint:disable
 
+import {createConnection, ConnectionOptions} from 'typeorm';
 
 export async function createbase1TriggerFuncsbublic() {
 const pgp = require('pg-promise')({});

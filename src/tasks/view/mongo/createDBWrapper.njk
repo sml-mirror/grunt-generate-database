@@ -1,3 +1,6 @@
+/*Codegen*/
+// tslint:disable
+
 {%for table in declaration.schemas[index].tables%}
 import { {{table.name}} } from '{{table.pathToModel}}';
 {%if table.historyPath%}

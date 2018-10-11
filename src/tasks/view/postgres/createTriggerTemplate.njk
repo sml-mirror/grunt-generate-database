@@ -1,3 +1,6 @@
+/*Codegen*/
+// tslint:disable
+
 {%for table in schema.tables%}
 {%if table.historyPath%}
 import { h{{table.modelName}} } from '{{table.historyPath}}';

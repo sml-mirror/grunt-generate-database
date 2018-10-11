@@ -1,3 +1,6 @@
+/*Codegen*/
+// tslint:disable
+
 import { y_hero } from '../../../../src/model/hero/hero';
 import { hy_hero } from '../../../../src/model/hero/hero';
 import * as dotenv from 'dotenv';
