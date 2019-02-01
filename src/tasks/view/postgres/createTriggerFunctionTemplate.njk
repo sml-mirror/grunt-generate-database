@@ -17,7 +17,20 @@ let queryproc = '';
 {% if table.modelName.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
 queryproc = 'CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin ' +
-`IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" values (default,TG_OP,NOW()` +
+`IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\"( __id, __operation, __changedate` +
+{% for fld in class.fields %}
+{%if fld.name==="__id" %}
+{%elif fld.name==="__operation"%}
+{%elif fld.name==="__changedate"%}
+{%else%}
+{%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
+',{{fld.name}}' +
+{%else%}
+',"{{fld.name}}"' +
+{%endif%}
+{%endif%}
+{% endfor %}
+`)values (default,TG_OP,NOW()` +
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}

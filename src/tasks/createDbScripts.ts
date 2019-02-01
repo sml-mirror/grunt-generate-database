@@ -1,18 +1,17 @@
 import "reflect-metadata";
-import {createConnection, ConnectionOptions} from "typeorm";
-import {render, renderString, configure} from "nunjucks";
+import {render, configure} from "nunjucks";
 import {DbOptions, Options} from "./model/options";
 import {Schema} from "./model/schema";
-import {Table} from "./model/table";
 import {Declaration} from "./model/declaration";
 import {parseStruct, Module} from "ts-file-parser";
+import { postgresKeywords } from "../tasks/keywords";
 import * as path from "path";
 
 function CreateFileForTriggersCreateForSchema(declaration: Declaration, historyStruct: Module, schema: Schema): void {
     let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
     var rendererTemplate = render("createTriggerFunctionTemplate.njk", {data: declaration, hStr: historyStruct,
-            schema: schema});
+            schema: schema, postgresKeywords: postgresKeywords});
     if (rendererTemplate && rendererTemplate.trim()) {
         var fs = require("fs");
         var mkdirp = require("mkdirp");
