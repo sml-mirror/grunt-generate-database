@@ -1,5 +1,6 @@
 /*Codegen*/
 // tslint:disable
+/* eslint-disable */
 
 import { hHero } from '../../../../src/model/hero/hero';
 import {createConnection, ConnectionOptions} from 'typeorm';

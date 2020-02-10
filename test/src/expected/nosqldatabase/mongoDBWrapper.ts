@@ -1,5 +1,6 @@
 /*Codegen*/
 // tslint:disable
+/* eslint-disable */
 
 import { y_hero } from '../../../../src/model/hero/hero';
 import { hy_hero } from '../../../../src/model/hero/hero';

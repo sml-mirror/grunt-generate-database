@@ -1,5 +1,6 @@
 /*Codegen*/
 // tslint:disable
+/* eslint-disable */
 
 import {createConnection, ConnectionOptions} from 'typeorm';
 
