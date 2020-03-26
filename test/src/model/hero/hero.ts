@@ -3,7 +3,7 @@ import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import { GenerateHistory } from "grunt-generate-history-model";
 
 @Entity("y_hero")
-@GenerateHistory({historyPath: "./test/src/model/hero"})
+@GenerateHistory({historyPath: "./test/src/model/hero/history"})
 export class Hero {
     @PrimaryGeneratedColumn()
     public id?: number;

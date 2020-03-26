@@ -25,8 +25,8 @@ export async function create{{data.name}}Triggers{{schema.namespace.toLowerCase(
     lowerStringSchema = '{{schema.namespace}}'.toLowerCase();
     queryproc = 'create trigger add_to_' + lowerStringSchema + '_h_' + lowerStringName + ' after insert or delete or update on "' +
     lowerStringSchema + '"."' + lowerStringName +
-    '" for each row execute procedure ' + lowerStringSchema +
-    '.add_to_history_' + lowerStringSchema + '_' + lowerStringName + '();';
+    '" for each row execute procedure {% if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}' + lowerStringSchema +
+    '{%if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}.add_to_history_' + lowerStringSchema + '_' + lowerStringName + '();';
     await db.none(queryproc);
 {%endif%}
 {%endfor%}

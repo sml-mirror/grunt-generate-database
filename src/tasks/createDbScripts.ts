@@ -21,7 +21,7 @@ function CreateFileForTriggersCreateForSchema(declaration: Declaration, historyS
         fs.writeFileSync(fileName, rendererTemplate, "utf-8");
     }
     configure(scriptFolder, {autoescape: true, trimBlocks: true});
-    rendererTemplate = render("createTriggerTemplate.njk", {data: declaration, schema: schema});
+    rendererTemplate = render("createTriggerTemplate.njk", {data: declaration, schema: schema, postgresKeywords: postgresKeywords});
     if (rendererTemplate && rendererTemplate.trim()) {
         fs = require("fs");
         mkdirp = require("mkdirp");
@@ -37,7 +37,7 @@ function CreateDBCreator(declarations: Declaration[]): void {
         let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
         configure(scriptFolder, {autoescape: true, trimBlocks: true});
         for (let i = 0 ; i < declaration.schemas.length; i++) {
-            var rendererTemplate = render("createDBWrapper.njk", {declaration: declaration, index: i});
+            var rendererTemplate = render("createDBWrapper.njk", {declaration: declaration, index: i, postgresKeywords: postgresKeywords});
             if (rendererTemplate && rendererTemplate.trim()) {
                 var fs = require("fs");
                 var mkdirp = require("mkdirp");
