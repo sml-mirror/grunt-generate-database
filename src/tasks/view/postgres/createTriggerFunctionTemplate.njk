@@ -17,7 +17,7 @@ let queryproc = '';
 {%for class in hStr.classes%}
 {% if table.modelName.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
-queryproc = 'CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin ' +
+queryproc = 'CREATE OR REPLACE FUNCTION {% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}{{schema.namespace.toLowerCase()}}{% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin ' +
 `IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\"( __id, __operation, __changedate` +
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
@@ -37,7 +37,7 @@ queryproc = 'CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_t
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-',{{kindofline}}.{{fld.name}}' +
+',{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}' +
 {%endif%}
 {% endfor %}
 '); return new;' +
@@ -60,7 +60,7 @@ queryproc = 'CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_t
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-`,{{kindofline}}.{{fld.name}}` +
+`,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}` +
 {%endif%}
 {% endfor %}
 `); return new;` +
@@ -84,7 +84,7 @@ queryproc = 'CREATE OR REPLACE FUNCTION {{schema.namespace.toLowerCase()}}.add_t
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-`,{{kindofline}}.{{fld.name}}` +
+`,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}` +
 {%endif%}
 {% endfor %}
 `); return old; end if; return null;` +
