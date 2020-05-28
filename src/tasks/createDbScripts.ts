@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import { configure } from "nunjucks";
-import * as dotenv from "dotenv";
 import * as path from "path";
 import {DbOptions, Options} from "./model/options";
 import {Schema} from "./model/schema";
