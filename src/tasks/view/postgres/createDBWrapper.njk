@@ -1,6 +1,7 @@
 /*Codegen*/
 // tslint:disable
 /* eslint-disable */
+import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
 
 {%for table in declaration.schemas[index].tables%}
 import { {{table.modelName}} } from '{{table.pathToModel}}';
@@ -10,8 +11,6 @@ import { h{{table.modelName}} } from '{{table.historyPath}}';
 {% endfor %}
 import { create{{declaration.name}}TriggerFuncs{{declaration.schemas[index].namespace}} } from './function';
 import { create{{declaration.name}}Triggers{{declaration.schemas[index].namespace}} } from './trigger';
-import * as dotenv from 'dotenv';
-import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
 
 export class {{declaration.schemas[index].namespace}}DBWrapper {
 

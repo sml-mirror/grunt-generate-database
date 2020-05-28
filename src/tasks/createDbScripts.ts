@@ -1,81 +1,109 @@
 import "reflect-metadata";
-import {render, configure} from "nunjucks";
+import { configure } from "nunjucks";
+import * as dotenv from "dotenv";
+import * as path from "path";
 import {DbOptions, Options} from "./model/options";
 import {Schema} from "./model/schema";
 import {Declaration} from "./model/declaration";
 import {parseStruct, Module} from "ts-file-parser";
 import { postgresKeywords } from "../tasks/keywords";
-import * as path from "path";
+import {
+    utf8String,
+    extension,
+    CreateTemplateType,
+    triggerFunctionTemplateFileName,
+    triggerTemplateFileName,
+    dbWrapperTemplateFileName,
+    emptyString,
+    postgresString,
+    pathToDeclaration,
+    DecoratorsName
+} from "./shared";
 
-function CreateFileForTriggersCreateForSchema(declaration: Declaration, historyStruct: Module, schema: Schema): void {
-    let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
-    configure(scriptFolder, {autoescape: true, trimBlocks: true});
-    var rendererTemplate = render("createTriggerFunctionTemplate.njk", {data: declaration, hStr: historyStruct,
-            schema: schema, postgresKeywords: postgresKeywords});
+const fs = require("fs");
+const mkdirp = require("mkdirp");
+dotenv.config({ path: ".env" });
+
+///////////////////
+
+function createFile(rendererTemplate: string, pathToWrapper: string, declarationName: string, namespace: string, filename: string) {
     if (rendererTemplate && rendererTemplate.trim()) {
-        var fs = require("fs");
-        var mkdirp = require("mkdirp");
-        var getDirName = require("path").dirname;
-        var fileName = declaration.pathToDBWrappers + "/" +  declaration.name + "/" +  schema.namespace + "/" + "function.ts";
-        mkdirp.sync(getDirName(fileName));
-        fs.writeFileSync(fileName, rendererTemplate, "utf-8");
-    }
-    configure(scriptFolder, {autoescape: true, trimBlocks: true});
-    rendererTemplate = render("createTriggerTemplate.njk", {data: declaration, schema: schema, postgresKeywords: postgresKeywords});
-    if (rendererTemplate && rendererTemplate.trim()) {
-        fs = require("fs");
-        mkdirp = require("mkdirp");
-        getDirName = require("path").dirname;
-        fileName = declaration.pathToDBWrappers + "/" +  declaration.name + "/" +  schema.namespace + "/" + "trigger.ts";
-        mkdirp.sync(getDirName(fileName));
-        fs.writeFileSync(fileName, rendererTemplate, "utf-8");
+        const fileName = `${pathToWrapper}/${declarationName}/${namespace}/${filename}`;
+        mkdirp.sync(path.dirname(fileName));
+        fs.writeFileSync(fileName, rendererTemplate, utf8String);
     }
 }
 
-function CreateDBCreator(declarations: Declaration[]): void {
+function configureEnvironment(scriptFolder: string) {
+    const env = configure(scriptFolder, {autoescape: true, trimBlocks: true});
+        env.addGlobal("databasePort", process.env.dbPort);
+        env.addGlobal("databaseUserName", process.env.dbUsername);
+        env.addGlobal("databaseHost", process.env.dbHost);
+        env.addGlobal("databasePassword", process.env.dbPassword);
+        env.addGlobal("databaseBase", process.env.dbBase);
+    return env;
+}
+
+function createFileForTriggersCreateForSchema(declaration: Declaration, hStr: Module, schema: Schema): void {
+    let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
+    const environment = configureEnvironment(scriptFolder);
+
+    const functionRendererTemplate = environment.render(triggerFunctionTemplateFileName, {data: declaration, hStr, schema, postgresKeywords});
+    createFile(
+        functionRendererTemplate,
+        declaration.pathToDBWrappers,
+        declaration.name, schema.namespace,
+        `${CreateTemplateType.function}${extension}`
+    );
+
+    const triggerRendererTemplate = environment.render(triggerTemplateFileName, { data: declaration, schema, postgresKeywords});
+    createFile(
+        triggerRendererTemplate,
+        declaration.pathToDBWrappers,
+        declaration.name, schema.namespace,
+        `${CreateTemplateType.trigger}${extension}`
+    );
+}
+
+function createDBCreator(declarations: Declaration[]): void {
     declarations.forEach( declaration => {
         let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
-        configure(scriptFolder, {autoescape: true, trimBlocks: true});
+        const environment = configureEnvironment(scriptFolder);
         for (let i = 0 ; i < declaration.schemas.length; i++) {
-            var rendererTemplate = render("createDBWrapper.njk", {declaration: declaration, index: i, postgresKeywords: postgresKeywords});
-            if (rendererTemplate && rendererTemplate.trim()) {
-                var fs = require("fs");
-                var mkdirp = require("mkdirp");
-                var getDirName = require("path").dirname;
-                var fileName = declaration.pathToDBWrappers  + "/" +  declaration.name + "/" + declaration.schemas[i].namespace +
-                `/${declaration.schemas[i].namespace}DBWrapper.ts`;
-                mkdirp.sync(getDirName(fileName));
-                fs.writeFileSync(fileName, rendererTemplate, "utf-8");
-            }
+            const rendererTemplate = environment
+                .render(dbWrapperTemplateFileName, {declaration: declaration, index: i, postgresKeywords: postgresKeywords});
+            createFile(
+                rendererTemplate,
+                declaration.pathToDBWrappers,
+                declaration.name,
+                declaration.schemas[i].namespace,
+                `${declaration.schemas[i].namespace}${CreateTemplateType.dbWrapper}${extension}`
+            );
         }
     });
 }
 
 export function CreateDbSCriptsInternal(opt?: Options): void {
-    var fs = require("fs");
-    const pathToDeclaration = "./declaration.json";
-    const jsonDeclarations  = fs.readFileSync(pathToDeclaration, "utf-8");
-    var declarations  = <Declaration[]>JSON.parse(jsonDeclarations);
-    let stringFile = "";
+    const jsonDeclarations  = fs.readFileSync(pathToDeclaration, utf8String);
+    const declarations  = <Declaration[]>JSON.parse(jsonDeclarations);
+    let stringFile = emptyString;
 
     for (let index = 0; index < declarations.length; index++) {
         let schms = declarations[index].schemas;
         let jsonStructure: Module = null;
         schms.forEach(schema => {
             schema.tables.forEach(table => {
-                let fileContent: string = fs.readFileSync(table.pathToModel + ".ts", "utf-8");
-                jsonStructure = parseStruct(fileContent, {}, "");
+                let fileContent: string = fs.readFileSync(`${table.pathToModel}${extension}`, utf8String);
+                jsonStructure = parseStruct(fileContent, {}, emptyString);
                 jsonStructure.classes.forEach(_class => {
                     table.modelName = _class.name;
                     _class.decorators.forEach(dec => {
-                        if (dec.name === "Entity") {
-                            if ( dec.arguments.length > 0) {
-                                table.name = dec.arguments[0] as string;
-                            } else {
-                                table.name = _class.name.toLowerCase();
-                            }
+                        if (dec.name === DecoratorsName.Entity) {
+                            table.name = dec.arguments.length > 0
+                                ? dec.arguments[0] as string
+                                : _class.name.toLowerCase();
                         }
-                        if (dec.name === "GenerateHistory" && _class.name.toLowerCase() === table.modelName.toLowerCase()) {
+                        if (dec.name === DecoratorsName.GenerateHistory && _class.name.toLowerCase() === table.modelName.toLowerCase()) {
                             table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/"
                                                 + _class.name.charAt(0).toLowerCase() + _class.name.slice(1);
                         }
@@ -84,33 +112,33 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
             });
         });
 
-        for (var innerIndex = 0; innerIndex < schms.length; innerIndex++) {
-            for (var tableIndex = 0; tableIndex < schms[innerIndex].tables.length; tableIndex++) {
-                var table = schms[innerIndex].tables[tableIndex];
-                var pathtobaseModel = table.pathToModel + ".ts";
-                stringFile += fs.readFileSync(pathtobaseModel, "utf-8");
+        for (let innerIndex = 0; innerIndex < schms.length; innerIndex++) {
+            for (let tableIndex = 0; tableIndex < schms[innerIndex].tables.length; tableIndex++) {
+                const table = schms[innerIndex].tables[tableIndex];
+                const pathtobaseModel = `${table.pathToModel}${extension}`;
+                stringFile += fs.readFileSync(pathtobaseModel, utf8String);
                 if (table.historyPath) {
-                    var pathtoHistory = table.historyPath + ".ts";
-                    stringFile += fs.readFileSync(pathtoHistory, "utf-8");
+                    const pathtoHistory = `${table.historyPath}${extension}`;
+                    stringFile += fs.readFileSync(pathtoHistory, utf8String);
                 }
             }
             schms[innerIndex].tables.forEach(table => {
                 let tmpPathtoDBWrappers = declarations[index].pathToDBWrappers + "/" + declarations[index].name + "/" + schms[innerIndex].namespace;
                 if (table.historyPath) {
-                    table.historyPath = require("path").relative(tmpPathtoDBWrappers, table.historyPath).split("\\").join("/");
+                    table.historyPath = path.relative(tmpPathtoDBWrappers, table.historyPath).split("\\").join("/");
                 }
-                table.pathToModel = require("path").relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
+                table.pathToModel = path.relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
             });
-            let json = parseStruct(stringFile, {}, "");
-            if (declarations[index].db === "postgres") {
-                CreateFileForTriggersCreateForSchema (declarations[index], json , schms[innerIndex]);
+            let json = parseStruct(stringFile, {}, emptyString);
+            if (declarations[index].db === postgresString) {
+                createFileForTriggersCreateForSchema (declarations[index], json , schms[innerIndex]);
             }
-            stringFile = "";
+            stringFile = emptyString;
         }
     }
-    CreateDBCreator(declarations);
-
+    createDBCreator(declarations);
 }
+
 export function CreateInitOptionsByGrunt(grunt: IGrunt ): Options {
     let opt = new Options();
     let dbOptions = new DbOptions();
