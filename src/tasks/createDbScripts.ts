@@ -22,9 +22,6 @@ import {
 
 const fs = require("fs");
 const mkdirp = require("mkdirp");
-dotenv.config({ path: ".env" });
-
-///////////////////
 
 function createFile(rendererTemplate: string, pathToWrapper: string, declarationName: string, namespace: string, filename: string) {
     if (rendererTemplate && rendererTemplate.trim()) {
@@ -36,11 +33,6 @@ function createFile(rendererTemplate: string, pathToWrapper: string, declaration
 
 function configureEnvironment(scriptFolder: string) {
     const env = configure(scriptFolder, {autoescape: true, trimBlocks: true});
-        env.addGlobal("databasePort", process.env.dbPort);
-        env.addGlobal("databaseUserName", process.env.dbUsername);
-        env.addGlobal("databaseHost", process.env.dbHost);
-        env.addGlobal("databasePassword", process.env.dbPassword);
-        env.addGlobal("databaseBase", process.env.dbBase);
     return env;
 }
 
