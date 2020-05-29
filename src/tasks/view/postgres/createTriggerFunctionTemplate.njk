@@ -4,92 +4,100 @@
 
 import {createConnection, ConnectionOptions} from 'typeorm';
 
-export async function create{{data.name}}TriggerFuncs{{schema.namespace.toLowerCase()}}() {
-const pgp = require('pg-promise')({});
-await pgp.end();
-const connectionString = 'postgres://' + process.env.{{data.dbusername}} + ':' +
-process.env.{{data.dbpassword}} + '@' + process.env.{{data.dbhost}} + ':' + process.env.{{data.dbport}} + '/' + process.env.{{data.dbdatabase}};
-
-const db = pgp(connectionString);
-let queryproc = '';
 {%for table in schema.tables%}
 {% if table.historyPath %}
 {%for class in hStr.classes%}
 {% if table.modelName.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
-queryproc = 'CREATE OR REPLACE FUNCTION {% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}{{schema.namespace.toLowerCase()}}{% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin ' +
-`IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\"( __id, __operation, __changedate` +
+export const {{table.name}}_{{schema.namespace}}_function_trigger_string= `CREATE OR REPLACE FUNCTION {% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}{{schema.namespace.toLowerCase()}}{% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin
+IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\"( __id, __operation, __changedate
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
 {%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
-',{{fld.name}}' +
+,{{fld.name}}
 {%else%}
-',"{{fld.name}}"' +
+,"{{fld.name}}"
 {%endif%}
 {%endif%}
 {% endfor %}
-`)values (default,TG_OP,NOW()` +
+)values (default,TG_OP,NOW()
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-',{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}' +
+,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
 {%endif%}
 {% endfor %}
-'); return new;' +
-`ELSIF (TG_OP='UPDATE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" ( __id, __operation, __changedate` +
-{% for fld in class.fields %}
-{%if fld.name==="__id" %}
-{%elif fld.name==="__operation"%}
-{%elif fld.name==="__changedate"%}
-{%else%}
-{%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
-',{{fld.name}}' +
-{%else%}
-',"{{fld.name}}"' +
-{%endif%}
-{%endif%}
-{% endfor %}
-`)values (default,TG_OP,NOW()` +
-{% for fld in class.fields %}
-{%if fld.name==="__id" %}
-{%elif fld.name==="__operation"%}
-{%elif fld.name==="__changedate"%}
-{%else%}
-`,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}` +
-{%endif%}
-{% endfor %}
-`); return new;` +
-`ELSIF (TG_OP='DELETE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" ( __id, __operation, __changedate` +
+); return new;
+ELSIF (TG_OP='UPDATE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" ( __id, __operation, __changedate
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
 {%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
-',{{fld.name}}' +
+,{{fld.name}}
 {%else%}
-',"{{fld.name}}"' +
+,"{{fld.name}}"
 {%endif%}
 {%endif%}
 {% endfor %}
-`)values (default,TG_OP,NOW()` +
+)values (default,TG_OP,NOW()
+{% for fld in class.fields %}
+{%if fld.name==="__id" %}
+{%elif fld.name==="__operation"%}
+{%elif fld.name==="__changedate"%}
+{%else%}
+,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
+{%endif%}
+{% endfor %}
+); return new;
+ELSIF (TG_OP='DELETE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\" ( __id, __operation, __changedate
+{% for fld in class.fields %}
+{%if fld.name==="__id" %}
+{%elif fld.name==="__operation"%}
+{%elif fld.name==="__changedate"%}
+{%else%}
+{%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
+,{{fld.name}}
+{%else%}
+,"{{fld.name}}"
+{%endif%}
+{%endif%}
+{% endfor %}
+)values (default,TG_OP,NOW()
 {% set kindofline="OLD" %}
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-`,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}` +
+,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
 {%endif%}
 {% endfor %}
-`); return old; end if; return null;` +
-`END;$$ LANGUAGE plpgsql;`;
-await db.none(queryproc);
+); return old; end if; return null;
+END;$$ LANGUAGE plpgsql;`
+{%endif%}
+{%endfor%}
+{%endif%}
+{%endfor%}
+
+export async function create{{data.name}}TriggerFuncs{{schema.namespace.toLowerCase()}}() {
+const pgp = require('pg-promise')({});
+await pgp.end();
+const connectionString = 'postgres://' + process.env.{{data.dbusername}} + ':' +
+process.env.{{data.dbpassword}} + '@' + process.env.{{data.dbhost}} + ':' + process.env.{{data.dbport}} + '/' + process.env.{{data.dbdatabase}};
+const db = pgp(connectionString);
+
+{%for table in schema.tables%}
+{% if table.historyPath %}
+{%for class in hStr.classes%}
+{% if table.modelName.toLowerCase() === class.name.toLowerCase().slice(1) %}
+await db.none({{table.name}}_{{schema.namespace}}_function_trigger_string);
 {%endif%}
 {%endfor%}
 {%endif%}

@@ -9,25 +9,24 @@ import { h{{table.modelName}} } from '{{table.historyPath}}';
 {% endfor %}
 import {createConnection, ConnectionOptions} from 'typeorm';
 
+const pgPromise = require('pg-promise');
+
+{%for table in schema.tables%}
+{% if table.historyPath %}
+export const {{table.name}}_{{schema.namespace}}_trigger_string = 'create trigger add_to_{{table.name.toLowerCase()}}_h_{{schema.namespace.toLowerCase()}} after insert or delete or update on "{{schema.namespace.toLowerCase()}}"."{{table.name.toLowerCase()}}" for each row execute procedure {% if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}{{schema.namespace.toLowerCase()}}{%if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}();';
+{%endif%}
+{%endfor%}
 
 export async function create{{data.name}}Triggers{{schema.namespace.toLowerCase()}}() {
-    const pgp = require('pg-promise')({});
+    const pgp = pgPromise({});
     await pgp.end();
     const connectionString = 'postgres://' + process.env.{{data.dbusername}} + ':' +
     process.env.{{data.dbpassword}} + '@' + process.env.{{data.dbhost}} + ':' + process.env.{{data.dbport}} + '/' + process.env.{{data.dbdatabase}};
     const db = pgp(connectionString);
-    let queryproc;
-    let lowerStringName;
-    let lowerStringSchema;
+
 {%for table in schema.tables%}
 {% if table.historyPath %}
-    lowerStringName = '{{table.name}}'.toLowerCase();
-    lowerStringSchema = '{{schema.namespace}}'.toLowerCase();
-    queryproc = 'create trigger add_to_' + lowerStringSchema + '_h_' + lowerStringName + ' after insert or delete or update on "' +
-    lowerStringSchema + '"."' + lowerStringName +
-    '" for each row execute procedure {% if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}' + lowerStringSchema +
-    '{%if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}.add_to_history_' + lowerStringSchema + '_' + lowerStringName + '();';
-    await db.none(queryproc);
+    await db.none({{table.name}}_{{schema.namespace}}_trigger_string);
 {%endif%}
 {%endfor%}
     pgp.end();
