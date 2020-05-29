@@ -1,13 +1,12 @@
 /*Codegen*/
 // tslint:disable
 /* eslint-disable */
+import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
 
 import { Hero } from '../../../../src/model/hero/hero';
 import { hHero } from '../../../../src/model/hero/history/hero';
 import { createbase1TriggerFuncsbublic } from './function';
 import { createbase1Triggersbublic } from './trigger';
-import * as dotenv from 'dotenv';
-import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
 
 export class bublicDBWrapper {
 
