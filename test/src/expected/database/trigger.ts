@@ -7,7 +7,7 @@ import {createConnection, ConnectionOptions} from 'typeorm';
 
 const pgPromise = require('pg-promise');
 
-export const y_hero_bublic_trigger_string = 'create trigger add_to_y_hero_h_bublic after insert or delete or update on "bublic"."y_hero" for each row execute procedure bublic.add_to_history_bublic_y_hero();';
+export const y_hero_bublic_trigger_string = 'create trigger add_to_bublic_h_y_hero after insert or delete or update on "bublic"."y_hero" for each row execute procedure bublic.add_to_history_bublic_y_hero();';
 
 export async function createbase1Triggersbublic() {
     const pgp = pgPromise({});
