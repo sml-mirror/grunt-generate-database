@@ -5,7 +5,7 @@ import {DbOptions, Options} from "./model/options";
 import {Schema} from "./model/schema";
 import {Declaration} from "./model/declaration";
 import {parseStruct, Module} from "ts-file-parser";
-import { postgresKeywords } from "../tasks/keywords";
+import { mssqlKeywords, postgresKeywords } from "./keywords";
 import {
     utf8String,
     extension,
@@ -14,13 +14,18 @@ import {
     triggerTemplateFileName,
     dbWrapperTemplateFileName,
     emptyString,
-    postgresString,
+    triggerEnabledDbTypes,
     pathToDeclaration,
     DecoratorsName
 } from "./shared";
 
 const fs = require("fs");
 const mkdirp = require("mkdirp");
+
+const dbTypeKeywords: Record<string, string[]> = {
+    mssql: mssqlKeywords,
+    postgres: postgresKeywords,
+};
 
 function createFile(rendererTemplate: string, pathToWrapper: string, declarationName: string, namespace: string, filename: string) {
     if (rendererTemplate && rendererTemplate.trim()) {
@@ -39,7 +44,12 @@ function createFileForTriggersCreateForSchema(declaration: Declaration, hStr: Mo
     let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
     const environment = configureEnvironment(scriptFolder);
 
-    const functionRendererTemplate = environment.render(triggerFunctionTemplateFileName, {data: declaration, hStr, schema, postgresKeywords});
+    const functionRendererTemplate = environment.render(triggerFunctionTemplateFileName, {
+        hStr,
+        schema,
+        data: declaration,
+        keywords: dbTypeKeywords[declaration.db],
+    });
     createFile(
         functionRendererTemplate,
         declaration.pathToDBWrappers,
@@ -47,7 +57,10 @@ function createFileForTriggersCreateForSchema(declaration: Declaration, hStr: Mo
         `${CreateTemplateType.function}${extension}`
     );
 
-    const triggerRendererTemplate = environment.render(triggerTemplateFileName, { data: declaration, schema, postgresKeywords});
+    const triggerRendererTemplate = environment.render(triggerTemplateFileName, {
+        data: declaration, schema,
+        keywords: dbTypeKeywords[declaration.db],
+    });
     createFile(
         triggerRendererTemplate,
         declaration.pathToDBWrappers,
@@ -62,7 +75,7 @@ function createDBCreator(declarations: Declaration[]): void {
         const environment = configureEnvironment(scriptFolder);
         for (let i = 0 ; i < declaration.schemas.length; i++) {
             const rendererTemplate = environment
-                .render(dbWrapperTemplateFileName, {declaration: declaration, index: i, postgresKeywords: postgresKeywords});
+                .render(dbWrapperTemplateFileName, {declaration: declaration, index: i, keywords: dbTypeKeywords[declaration.db] });
             createFile(
                 rendererTemplate,
                 declaration.pathToDBWrappers,
@@ -121,7 +134,7 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 table.pathToModel = path.relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
             });
             let json = parseStruct(stringFile, {}, emptyString);
-            if (declarations[index].db === postgresString) {
+            if (triggerEnabledDbTypes.find((type) => type === declarations[index].db) !== undefined) {
                 createFileForTriggersCreateForSchema (declarations[index], json , schms[innerIndex]);
             }
             stringFile = emptyString;

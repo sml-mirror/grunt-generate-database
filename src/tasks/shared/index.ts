@@ -1,5 +1,5 @@
 export const emptyString = "";
-export const postgresString = "postgres";
+export const triggerEnabledDbTypes: string[] = ["postgres", "mssql"];
 
 export const triggerFunctionTemplateFileName = "createTriggerFunctionTemplate.njk";
 export const triggerTemplateFileName = "createTriggerTemplate.njk";

@@ -1,0 +1,72 @@
+/*Codegen*/
+// tslint:disable
+/* eslint-disable */
+import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
+
+{%for table in declaration.schemas[index].tables%}
+import { {{table.modelName}} } from '{{table.pathToModel}}';
+{%if table.historyPath%}
+import { h{{table.modelName}} } from '{{table.historyPath}}';
+{% endif %}
+{% endfor %}
+
+export class {{declaration.schemas[index].namespace}}DBWrapper {
+
+    private static connection: Connection;
+
+    public static async initialize(dropSchema?: boolean, sync?: boolean): Promise<void> {
+        await this.close();
+
+        if (! dropSchema) {
+            dropSchema = false;
+        }
+        if (! sync) {
+            sync = false;
+        }
+
+        this.connection = await this.createTables(dropSchema, sync);
+    }
+
+    private static async createTables(dropSchema?: boolean, sync?: boolean) {
+        return await createConnection({
+            name: '{{declaration.schemas[index].namespace}}',
+            type: 'mssql',
+            replication: {
+                master: {
+                    host:  process.env.{{declaration.dbhost}},
+                    port: parseInt(process.env.{{declaration.dbport}}, 10),
+                    username:  process.env.{{declaration.dbusername}},
+                    password: process.env.{{declaration.dbpassword}},
+                    database: process.env.{{declaration.dbdatabase}}
+                },
+                slaves: []
+            },
+            extra: {
+                trustServerCertificate: true,
+            },
+            entities: [
+{% for table in declaration.schemas[index].tables %}
+            {{table.modelName}}
+{% if table.historyPath%}
+            , h{{table.modelName}}
+{% endif %}
+{%if table !== declaration.schemas[index].tables[declaration.schemas[index].tables.length-1]%},
+{%endif%}
+{%endfor%}
+],
+      schema: '{{declaration.schemas[index].namespace}}',
+      synchronize: sync,
+      dropSchema: dropSchema
+      });
+    }
+    public static getEntityManager (): EntityManager {
+        return getManager('{{declaration.schemas[index].namespace}}');
+    }
+
+    public static async close(): Promise<void> {
+        if (this.connection) {
+            await this.connection.close();
+            this.connection = null;
+        }
+    }
+}

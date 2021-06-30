@@ -13,7 +13,7 @@ const pgPromise = require('pg-promise');
 
 {%for table in schema.tables%}
 {% if table.historyPath %}
-export const {{table.name}}_{{schema.namespace}}_trigger_string = 'create trigger add_to_{{schema.namespace.toLowerCase()}}_h_{{table.name.toLowerCase()}} after insert or delete or update on "{{schema.namespace.toLowerCase()}}"."{{table.name.toLowerCase()}}" for each row execute procedure {% if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}{{schema.namespace.toLowerCase()}}{%if postgresKeywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}();';
+export const {{table.name}}_{{schema.namespace}}_trigger_string = 'create trigger add_to_{{schema.namespace.toLowerCase()}}_h_{{table.name.toLowerCase()}} after insert or delete or update on "{{schema.namespace.toLowerCase()}}"."{{table.name.toLowerCase()}}" for each row execute procedure {% if keywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}{{schema.namespace.toLowerCase()}}{%if keywords.includes(table.name.toUpperCase()) === true %}\"{% endif%}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}();';
 {%endif%}
 {%endfor%}
 
