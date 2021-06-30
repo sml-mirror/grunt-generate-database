@@ -9,14 +9,14 @@ import {createConnection, ConnectionOptions} from 'typeorm';
 {%for class in hStr.classes%}
 {% if table.modelName.toLowerCase() === class.name.toLowerCase().slice(1) %}
 {% set kindofline="NEW" %}
-export const {{table.name}}_{{schema.namespace}}_function_trigger_string= `CREATE OR REPLACE FUNCTION {% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}{{schema.namespace.toLowerCase()}}{% if postgresKeywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin
+export const {{table.name}}_{{schema.namespace}}_function_trigger_string= `CREATE OR REPLACE FUNCTION {% if keywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}{{schema.namespace.toLowerCase()}}{% if keywords.includes(schema.namespace.toUpperCase()) === true %}\"{% endif %}.add_to_history_{{schema.namespace.toLowerCase()}}_{{table.name.toLowerCase()}}() RETURNS TRIGGER AS $$ begin
 IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_{{table.name.toLowerCase()}}\"( __id, __operation, __changedate
 {% for fld in class.fields %}
 {%if fld.name==="__id" %}
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-{%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
+{%if keywords.includes(fld.name.toUpperCase()) === false %}
 ,{{fld.name}}
 {%else%}
 ,"{{fld.name}}"
@@ -29,7 +29,7 @@ IF (TG_OP='INSERT') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\"h_
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
+,{{kindofline}}.{% if keywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if keywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
 {%endif%}
 {% endfor %}
 ); return new;
@@ -39,7 +39,7 @@ ELSIF (TG_OP='UPDATE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-{%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
+{%if keywords.includes(fld.name.toUpperCase()) === false %}
 ,{{fld.name}}
 {%else%}
 ,"{{fld.name}}"
@@ -52,7 +52,7 @@ ELSIF (TG_OP='UPDATE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
+,{{kindofline}}.{% if keywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if keywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
 {%endif%}
 {% endfor %}
 ); return new;
@@ -62,7 +62,7 @@ ELSIF (TG_OP='DELETE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-{%if postgresKeywords.includes(fld.name.toUpperCase()) === false %}
+{%if keywords.includes(fld.name.toUpperCase()) === false %}
 ,{{fld.name}}
 {%else%}
 ,"{{fld.name}}"
@@ -76,7 +76,7 @@ ELSIF (TG_OP='DELETE') THEN INSERT INTO \"{{schema.namespace.toLowerCase()}}\".\
 {%elif fld.name==="__operation"%}
 {%elif fld.name==="__changedate"%}
 {%else%}
-,{{kindofline}}.{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if postgresKeywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
+,{{kindofline}}.{% if keywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}{{fld.name}}{% if keywords.includes(fld.name.toUpperCase()) === true %}\"{% endif %}
 {%endif%}
 {% endfor %}
 ); return old; end if; return null;
