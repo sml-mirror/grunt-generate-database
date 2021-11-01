@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { configure } from "nunjucks";
+import { configure, Environment } from "nunjucks";
 import * as path from "path";
 import {DbOptions, Options} from "./model/options";
 import {Schema} from "./model/schema";
@@ -16,7 +16,8 @@ import {
     emptyString,
     triggerEnabledDbTypes,
     pathToDeclaration,
-    DecoratorsName
+    DecoratorsName,
+    triggerMssqlFileName
 } from "./shared";
 
 const fs = require("fs");
@@ -40,48 +41,91 @@ function configureEnvironment(scriptFolder: string) {
     return env;
 }
 
+const fileCreator = (
+    environment: Environment,
+    schema: Schema,
+    data: Declaration,
+    keywords: string[],
+    pathToWrappers: string,
+    name: string,
+    templateFile: string,
+    templateType: CreateTemplateType,
+    hStr?: Module
+) => {
+    const functionRendererTemplate = environment.render(templateFile, {
+        hStr,
+        schema,
+        data,
+        keywords,
+    });
+
+    const futureFunctionFileName =  `${CreateTemplateType.function}${extension}`;
+    createFile(functionRendererTemplate, pathToWrappers, name, schema.namespace, futureFunctionFileName);
+
+};
+
 function createFileForTriggersCreateForSchema(declaration: Declaration, hStr: Module, schema: Schema): void {
     let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
     const environment = configureEnvironment(scriptFolder);
+    const {pathToDBWrappers, name, db} = declaration;
+    const keywords = dbTypeKeywords[db];
+    switch (db) {
+        case "mssql":
+            fileCreator(
+                environment,
+                schema,
+                declaration,
+                keywords,
+                pathToDBWrappers,
+                name,
+                triggerMssqlFileName,
+                CreateTemplateType.function,
+                hStr
+            );
+            break;
+        case "postgres":
+            fileCreator(
+                environment,
+                schema,
+                declaration,
+                keywords,
+                pathToDBWrappers,
+                name,
+                triggerFunctionTemplateFileName,
+                CreateTemplateType.function,
+                hStr
+            );
 
-    const functionRendererTemplate = environment.render(triggerFunctionTemplateFileName, {
-        hStr,
-        schema,
-        data: declaration,
-        keywords: dbTypeKeywords[declaration.db],
-    });
-    createFile(
-        functionRendererTemplate,
-        declaration.pathToDBWrappers,
-        declaration.name, schema.namespace,
-        `${CreateTemplateType.function}${extension}`
-    );
-
-    const triggerRendererTemplate = environment.render(triggerTemplateFileName, {
-        data: declaration, schema,
-        keywords: dbTypeKeywords[declaration.db],
-    });
-    createFile(
-        triggerRendererTemplate,
-        declaration.pathToDBWrappers,
-        declaration.name, schema.namespace,
-        `${CreateTemplateType.trigger}${extension}`
-    );
+            fileCreator(
+                environment,
+                schema,
+                declaration,
+                keywords,
+                pathToDBWrappers,
+                name,
+                triggerTemplateFileName,
+                CreateTemplateType.trigger,
+                hStr
+            );
+            break;
+        default:
+            break;
+    }
 }
 
 function createDBCreator(declarations: Declaration[]): void {
     declarations.forEach( declaration => {
         let scriptFolder = path.resolve(__dirname, `view/${declaration.db}/`);
         const environment = configureEnvironment(scriptFolder);
-        for (let i = 0 ; i < declaration.schemas.length; i++) {
-            const rendererTemplate = environment
-                .render(dbWrapperTemplateFileName, {declaration: declaration, index: i, keywords: dbTypeKeywords[declaration.db] });
+        for (let index = 0 ; index < declaration.schemas.length; index++) {
+            const keywords = (dbTypeKeywords[declaration.db] || []);
+            const rendererTemplate = environment.render(dbWrapperTemplateFileName, {declaration, index, keywords });
             createFile(
                 rendererTemplate,
                 declaration.pathToDBWrappers,
                 declaration.name,
-                declaration.schemas[i].namespace,
-                `${declaration.schemas[i].namespace}${CreateTemplateType.dbWrapper}${extension}`
+                declaration.schemas[index].namespace,
+                `${declaration.schemas[index].namespace}${CreateTemplateType.dbWrapper}${extension}`
             );
         }
     });
@@ -108,8 +152,9 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                                 : _class.name.toLowerCase();
                         }
                         if (dec.name === DecoratorsName.GenerateHistory && _class.name.toLowerCase() === table.modelName.toLowerCase()) {
-                            table.historyPath = dec.arguments[0].valueOf()["historyPath"] + "/"
-                                                + _class.name.charAt(0).toLowerCase() + _class.name.slice(1);
+                            const historyPath = dec.arguments[0].valueOf()["historyPath"];
+                            const classFirstChar = _class.name.charAt(0).toLowerCase();
+                            table.historyPath = `${historyPath}/${classFirstChar}${_class.name.slice(1)}`;
                         }
                     });
                 });
@@ -133,9 +178,10 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 }
                 table.pathToModel = path.relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
             });
-            let json = parseStruct(stringFile, {}, emptyString);
-            if (triggerEnabledDbTypes.find((type) => type === declarations[index].db) !== undefined) {
-                createFileForTriggersCreateForSchema (declarations[index], json , schms[innerIndex]);
+            const json = parseStruct(stringFile, {}, emptyString);
+            const isTriggerCreateEnable = triggerEnabledDbTypes.find(type => type === declarations[index].db);
+            if (isTriggerCreateEnable) {
+                createFileForTriggersCreateForSchema(declarations[index], json , schms[innerIndex]);
             }
             stringFile = emptyString;
         }
