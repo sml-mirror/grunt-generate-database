@@ -1,0 +1,65 @@
+/*Codegen*/
+// tslint:disable
+/* eslint-disable */
+
+{%for table in schema.tables%}
+{%if table.historyPath%}
+import { h{{table.modelName}} } from '{{table.historyPath}}';
+{% endif %}
+{% endfor %}
+
+const sql = require('mssql');
+
+{%for table in schema.tables%}
+{% if table.historyPath %}
+{%for class in hStr.classes%}
+{% if table.modelName.toLowerCase() === class.name.toLowerCase().slice(1) %}
+export const tr_{{table.name}}_{{schema.namespace}}_insert = `create trigger tr_{{table.name}}_{{schema.namespace}}_insert on [{{schema.namespace}}].[{{table.name}}] for insert
+as
+insert into [{{schema.namespace}}].[h_{{table.name}}]
+(__operation, __changedate{% for fld in class.fields %}{%if fld.name==="__id" %}{%elif fld.name==="__operation"%}{%elif fld.name==="__changedate"%}{%else%}{%if keywords.includes(fld.name.toUpperCase()) === false %},{{fld.name}}{%else%},"{{fld.name}}"{%endif%}{%endif%}{% endfor %})
+select 'INSERT', getutcdate() {% for fld in class.fields %}{%if fld.name==="__id" %}{%elif fld.name==="__operation"%}{%elif fld.name==="__changedate"%}{%else%}{%if keywords.includes(fld.name.toUpperCase()) === false %},i.{{fld.name}}{%else%},i."{{fld.name}}"{%endif%}{%endif%}{% endfor %} from inserted i;
+`
+
+export const tr_{{table.name}}_{{schema.namespace}}_update = `create trigger tr_{{table.name}}_{{schema.namespace}}_update on [{{schema.namespace}}].[{{table.name}}] for update
+as
+insert into [{{schema.namespace}}].[h_{{table.name}}]
+(__operation, __changedate{% for fld in class.fields %}{%if fld.name==="__id" %}{%elif fld.name==="__operation"%}{%elif fld.name==="__changedate"%}{%else%}{%if keywords.includes(fld.name.toUpperCase()) === false %},{{fld.name}}{%else%},"{{fld.name}}"{%endif%}{%endif%}{% endfor %})
+select 'UPDATE', getutcdate() {% for fld in class.fields %}{%if fld.name==="__id" %}{%elif fld.name==="__operation"%}{%elif fld.name==="__changedate"%}{%else%}{%if keywords.includes(fld.name.toUpperCase()) === false %},i.{{fld.name}}{%else%},i."{{fld.name}}"{%endif%}{%endif%}{% endfor %} from inserted i;
+`
+
+export const tr_{{table.name}}_{{schema.namespace}}_delete = `create trigger tr_{{table.name}}_{{schema.namespace}}_delete on [{{schema.namespace}}].[{{table.name}}] for delete
+as
+insert into [{{schema.namespace}}].[h_{{table.name}}]
+(__operation, __changedate{% for fld in class.fields %}{%if fld.name==="__id" %}{%elif fld.name==="__operation"%}{%elif fld.name==="__changedate"%}{%else%}{%if keywords.includes(fld.name.toUpperCase()) === false %},{{fld.name}}{%else%},"{{fld.name}}"{%endif%}{%endif%}{% endfor %})
+select 'DELETE', getutcdate() {% for fld in class.fields %}{%if fld.name==="__id" %}{%elif fld.name==="__operation"%}{%elif fld.name==="__changedate"%}{%else%}{%if keywords.includes(fld.name.toUpperCase()) === false %},i.{{fld.name}}{%else%},i."{{fld.name}}"{%endif%}{%endif%}{% endfor %} from deleted i;
+`
+{%endif%}
+{%endfor%}
+{%endif%}
+{%endfor%}
+
+
+
+export async function create{{data.name}}Triggers{{schema.namespace.toLowerCase()}}() {
+const config = {
+    user: process.env.{{data.dbusername}},
+    password: process.env.{{data.dbpassword}},
+    server: process.env.{{data.dbhost}},
+    port: +process.env.{{data.dbport}},
+    base: process.env.{{data.dbdatabase}},
+    options: {
+        trustServerCertificate: true,
+    }
+};
+    await sql.connect(config);
+    await sql.query(`USE ${process.env.{{data.dbdatabase}}}`)
+{%for table in schema.tables%}
+{% if table.historyPath %}
+    await sql.query(`${tr_{{table.name}}_{{schema.namespace}}_insert }`);
+    await sql.query(`${tr_{{table.name}}_{{schema.namespace}}_update }`);
+    await sql.query(`${tr_{{table.name}}_{{schema.namespace}}_delete }`);
+    await sql.close();
+{%endif%}
+{%endfor%}
+}

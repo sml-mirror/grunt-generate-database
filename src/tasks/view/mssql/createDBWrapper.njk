@@ -9,25 +9,21 @@ import { {{table.modelName}} } from '{{table.pathToModel}}';
 import { h{{table.modelName}} } from '{{table.historyPath}}';
 {% endif %}
 {% endfor %}
+import { create{{declaration.name}}Triggers{{declaration.schemas[index].namespace.toLowerCase()}} } from './function';
 
 export class {{declaration.schemas[index].namespace}}DBWrapper {
 
     private static connection: Connection;
 
-    public static async initialize(dropSchema?: boolean, sync?: boolean): Promise<void> {
+    public static async initialize(createTriggers?: boolean, sync?: boolean): Promise<void> {
         await this.close();
-
-        if (! dropSchema) {
-            dropSchema = false;
+        this.connection = await this.createTables(sync || false);
+        if (createTriggers) {
+            await create{{declaration.name}}Triggers{{declaration.schemas[index].namespace.toLowerCase()}}()
         }
-        if (! sync) {
-            sync = false;
-        }
-
-        this.connection = await this.createTables(dropSchema, sync);
     }
 
-    private static async createTables(dropSchema?: boolean, sync?: boolean) {
+    private static async createTables(synchronize: boolean) {
         return await createConnection({
             name: '{{declaration.schemas[index].namespace}}',
             type: 'mssql',
@@ -55,8 +51,8 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
 {%endfor%}
 ],
       schema: '{{declaration.schemas[index].namespace}}',
-      synchronize: sync,
-      dropSchema: dropSchema
+      synchronize,
+      dropSchema: false
       });
     }
     public static getEntityManager (): EntityManager {
