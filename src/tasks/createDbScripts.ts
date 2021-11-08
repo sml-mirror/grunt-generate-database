@@ -59,7 +59,7 @@ const fileCreator = (
         keywords,
     });
 
-    const futureFunctionFileName =  `${CreateTemplateType.function}${extension}`;
+    const futureFunctionFileName =  `${templateType}${extension}`;
     createFile(functionRendererTemplate, pathToWrappers, name, schema.namespace, futureFunctionFileName);
 
 };
