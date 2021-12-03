@@ -59,7 +59,7 @@ const config = {
     await sql.query(`${tr_{{table.name}}_{{schema.namespace}}_insert }`);
     await sql.query(`${tr_{{table.name}}_{{schema.namespace}}_update }`);
     await sql.query(`${tr_{{table.name}}_{{schema.namespace}}_delete }`);
-    await sql.close();
 {%endif%}
 {%endfor%}
+    await sql.close();
 }
