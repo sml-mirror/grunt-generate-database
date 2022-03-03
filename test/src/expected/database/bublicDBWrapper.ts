@@ -2,6 +2,7 @@
 // tslint:disable
 /* eslint-disable */
 import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 import { Hero } from '../../../../src/model/hero/hero';
 import { hHero } from '../../../../src/model/hero/history/hero';
@@ -29,8 +30,8 @@ export class bublicDBWrapper {
         }
     }
 
-    private static async createTables(dropSchema?: boolean, sync?: boolean) {
-        return await createConnection({
+    private static async createTables(dropSchema?: boolean, sync?: boolean, extra?: Partial<PostgresConnectionOptions>) {
+        const baseOptions: PostgresConnectionOptions = {
             name: 'bublic',
             type: 'postgres',
             replication: {
@@ -43,14 +44,14 @@ export class bublicDBWrapper {
                 },
                 slaves: []
             },
-            entities: [
-            Hero
-            , hHero
-],
-      schema: 'bublic',
-      synchronize: sync,
-      dropSchema: dropSchema
-      });
+            entities: [Hero, hHero,],
+            schema: 'bublic',
+            synchronize: sync,
+            dropSchema: dropSchema
+        }
+
+        const optionsToConnect = {...(extra || {}), ...baseOptions};
+        return await createConnection(optionsToConnect);
     }
     public static getEntityManager (): EntityManager {
         return getManager('bublic');

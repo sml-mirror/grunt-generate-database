@@ -28,6 +28,10 @@ const dbTypeKeywords: Record<string, string[]> = {
     postgres: postgresKeywords,
 };
 
+const replaceLinuxSlashToCommonFromPath = (path: string) => {
+    return path.split("\\").join("/")
+};
+
 function createFile(rendererTemplate: string, pathToWrapper: string, declarationName: string, namespace: string, filename: string) {
     if (rendererTemplate && rendererTemplate.trim()) {
         const fileName = `${pathToWrapper}/${declarationName}/${namespace}/${filename}`;
@@ -109,6 +113,7 @@ function createFileForTriggersCreateForSchema(declaration: Declaration, hStr: Mo
             );
             break;
         default:
+            console.warn(`${db} has no supported functions to create triggers(available 'mssql', 'postgres')`);
             break;
     }
 }
@@ -151,11 +156,14 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                                 ? dec.arguments[0] as string
                                 : _class.name.toLowerCase();
                         }
-                        if (dec.name === DecoratorsName.GenerateHistory && _class.name.toLowerCase() === table.modelName.toLowerCase()) {
-                            const historyPath = dec.arguments[0].valueOf()["historyPath"];
-                            const classFirstChar = _class.name.charAt(0).toLowerCase();
-                            table.historyPath = `${historyPath}/${classFirstChar}${_class.name.slice(1)}`;
+                        const isClassNameIsEqualTableModelName = _class.name.toLowerCase() === table.modelName.toLowerCase();
+                        const needToAddHistoryPathToTable = dec.name === DecoratorsName.GenerateHistory && isClassNameIsEqualTableModelName;
+                        if (!needToAddHistoryPathToTable) {
+                            return;
                         }
+                        const historyPath = dec.arguments[0].valueOf()["historyPath"];
+                        const classFirstChar = _class.name.charAt(0).toLowerCase();
+                        table.historyPath = `${historyPath}/${classFirstChar}${_class.name.slice(1)}`;
                     });
                 });
             });
@@ -172,11 +180,15 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                 }
             }
             schms[innerIndex].tables.forEach(table => {
-                let tmpPathtoDBWrappers = declarations[index].pathToDBWrappers + "/" + declarations[index].name + "/" + schms[innerIndex].namespace;
+                const {pathToDBWrappers, name} = declarations[index];
+                const baseNamespace = schms[innerIndex].namespace;
+                let tmpPathtoDBWrappers = `${pathToDBWrappers}/${name}/${baseNamespace}`;
                 if (table.historyPath) {
-                    table.historyPath = path.relative(tmpPathtoDBWrappers, table.historyPath).split("\\").join("/");
+                    const historyPath = path.relative(tmpPathtoDBWrappers, table.historyPath);
+                    table.historyPath = replaceLinuxSlashToCommonFromPath(historyPath);
                 }
-                table.pathToModel = path.relative(tmpPathtoDBWrappers, table.pathToModel).split("\\").join("/");
+                const pathToModel = path.relative(tmpPathtoDBWrappers, table.pathToModel);
+                table.pathToModel = replaceLinuxSlashToCommonFromPath(pathToModel)
             });
             const json = parseStruct(stringFile, {}, emptyString);
             const isTriggerCreateEnable = triggerEnabledDbTypes.find(type => type === declarations[index].db);

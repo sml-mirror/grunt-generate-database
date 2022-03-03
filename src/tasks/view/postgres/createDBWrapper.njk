@@ -2,6 +2,7 @@
 // tslint:disable
 /* eslint-disable */
 import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 {%for table in declaration.schemas[index].tables%}
 import { {{table.modelName}} } from '{{table.pathToModel}}';
@@ -33,8 +34,8 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
         }
     }
 
-    private static async createTables(dropSchema?: boolean, sync?: boolean) {
-        return await createConnection({
+    private static async createTables(dropSchema?: boolean, sync?: boolean, extra?: Partial<PostgresConnectionOptions>) {
+        const baseOptions: PostgresConnectionOptions = {
             name: '{{declaration.schemas[index].namespace}}',
             type: 'postgres',
             replication: {
@@ -47,20 +48,14 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
                 },
                 slaves: []
             },
-            entities: [
-{% for table in declaration.schemas[index].tables %}
-            {{table.modelName}}
-{% if table.historyPath%}
-            , h{{table.modelName}}
-{% endif %}
-{%if table !== declaration.schemas[index].tables[declaration.schemas[index].tables.length-1]%},
-{%endif%}
-{%endfor%}
-],
-      schema: '{{declaration.schemas[index].namespace}}',
-      synchronize: sync,
-      dropSchema: dropSchema
-      });
+            entities: [{% for table in declaration.schemas[index].tables %}{{table.modelName}},{% if table.historyPath%} h{{table.modelName}},{% endif %}{%endfor%}],
+            schema: '{{declaration.schemas[index].namespace}}',
+            synchronize: sync,
+            dropSchema: dropSchema
+        }
+
+        const optionsToConnect = {...(extra || {}), ...baseOptions};
+        return await createConnection(optionsToConnect);
     }
     public static getEntityManager (): EntityManager {
         return getManager('{{declaration.schemas[index].namespace}}');
