@@ -29,7 +29,7 @@ const dbTypeKeywords: Record<string, string[]> = {
 };
 
 const replaceLinuxSlashToCommonFromPath = (path: string) => {
-    return path.split("\\").join("/")
+    return path.split("\\").join("/");
 };
 
 function createFile(rendererTemplate: string, pathToWrapper: string, declarationName: string, namespace: string, filename: string) {
@@ -188,7 +188,7 @@ export function CreateDbSCriptsInternal(opt?: Options): void {
                     table.historyPath = replaceLinuxSlashToCommonFromPath(historyPath);
                 }
                 const pathToModel = path.relative(tmpPathtoDBWrappers, table.pathToModel);
-                table.pathToModel = replaceLinuxSlashToCommonFromPath(pathToModel)
+                table.pathToModel = replaceLinuxSlashToCommonFromPath(pathToModel);
             });
             const json = parseStruct(stringFile, {}, emptyString);
             const isTriggerCreateEnable = triggerEnabledDbTypes.find(type => type === declarations[index].db);
