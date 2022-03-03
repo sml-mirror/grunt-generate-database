@@ -1,7 +1,8 @@
 /*Codegen*/
 // tslint:disable
 /* eslint-disable */
-import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
+import {createConnection, Connection, getManager, EntityManager, ConnectionOptions} from 'typeorm';
+import { SqlServerConnectionOptions } from 'typeorm/driver/sqlserver/SqlServerConnectionOptions';
 
 {%for table in declaration.schemas[index].tables%}
 import { {{table.modelName}} } from '{{table.pathToModel}}';
@@ -23,8 +24,8 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
         }
     }
 
-    private static async createTables(synchronize: boolean) {
-        return await createConnection({
+    private static async createTables(synchronize: boolean, extra?: Partial<SqlServerConnectionOptions>) {
+        const baseOptions: SqlServerConnectionOptions = {
             name: '{{declaration.schemas[index].namespace}}',
             type: 'mssql',
             replication: {
@@ -40,20 +41,14 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
             extra: {
                 trustServerCertificate: true,
             },
-            entities: [
-{% for table in declaration.schemas[index].tables %}
-            {{table.modelName}}
-{% if table.historyPath%}
-            , h{{table.modelName}}
-{% endif %}
-{%if table !== declaration.schemas[index].tables[declaration.schemas[index].tables.length-1]%},
-{%endif%}
-{%endfor%}
-],
-      schema: '{{declaration.schemas[index].namespace}}',
-      synchronize,
-      dropSchema: false
-      });
+            entities: [{% for table in declaration.schemas[index].tables %}{{table.modelName}},{% if table.historyPath%} h{{table.modelName}},{% endif %}{%endfor%}],
+            schema: '{{declaration.schemas[index].namespace}}',
+            synchronize,
+            dropSchema: false
+        };
+
+        const optionsToConnect = {...(extra || {}), ...baseOptions};
+        return await createConnection(optionsToConnect);
     }
     public static getEntityManager (): EntityManager {
         return getManager('{{declaration.schemas[index].namespace}}');
