@@ -41,6 +41,7 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
             extra: {
                 trustServerCertificate: true,
             },
+            options: {% if declaration.options %}{{declaration.options | dump | safe}}{% else %}{}{% endif %},
             entities: [{% for table in declaration.schemas[index].tables %}{{table.modelName}},{% if table.historyPath%} h{{table.modelName}},{% endif %}{%endfor%}],
             schema: '{{declaration.schemas[index].namespace}}',
             synchronize,
