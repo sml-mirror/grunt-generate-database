@@ -17,7 +17,7 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
 
     private static connection: Connection;
 
-    public static async initialize(dropSchema?: boolean, sync?: boolean): Promise<void> {
+    public static async initialize(dropSchema?: boolean, sync?: boolean, extra?: Partial<PostgresConnectionOptions>): Promise<void> {
         await this.close();
 
         if (! dropSchema) {
@@ -27,7 +27,7 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
             sync = false;
         }
 
-        this.connection = await this.createTables(dropSchema, sync);
+        this.connection = await this.createTables(dropSchema, sync, extra);
         if (dropSchema) {
             await create{{declaration.name}}TriggerFuncs{{declaration.schemas[index].namespace}}();
             await create{{declaration.name}}Triggers{{declaration.schemas[index].namespace}}();

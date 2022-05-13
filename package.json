@@ -1,7 +1,7 @@
 {
   "name": "grunt-generate-database",
-  "version": "0.0.34",
-  "description": "Grunt task for create database generation scripts by models description",
+  "version": "0.0.35",
+  "description": "CLI for generate typeorm wrappers for postgreSQL and MsSQL",
   "private": false,
   "main": "dist/src/index.js",
   "bin": {

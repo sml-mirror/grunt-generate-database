@@ -13,7 +13,7 @@ export class bublicDBWrapper {
 
     private static connection: Connection;
 
-    public static async initialize(dropSchema?: boolean, sync?: boolean): Promise<void> {
+    public static async initialize(dropSchema?: boolean, sync?: boolean, extra?: Partial<PostgresConnectionOptions>): Promise<void> {
         await this.close();
 
         if (! dropSchema) {
@@ -23,7 +23,7 @@ export class bublicDBWrapper {
             sync = false;
         }
 
-        this.connection = await this.createTables(dropSchema, sync);
+        this.connection = await this.createTables(dropSchema, sync, extra);
         if (dropSchema) {
             await createbase1TriggerFuncsbublic();
             await createbase1Triggersbublic();

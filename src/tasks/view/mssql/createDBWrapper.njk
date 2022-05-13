@@ -16,9 +16,9 @@ export class {{declaration.schemas[index].namespace}}DBWrapper {
 
     private static connection: Connection;
 
-    public static async initialize(createTriggers?: boolean, sync?: boolean): Promise<void> {
+    public static async initialize(createTriggers?: boolean, sync?: boolean, extra?: Partial<SqlServerConnectionOptions>): Promise<void> {
         await this.close();
-        this.connection = await this.createTables(sync || false);
+        this.connection = await this.createTables(sync || false, extra);
         if (createTriggers) {
             await create{{declaration.name}}Triggers{{declaration.schemas[index].namespace.toLowerCase()}}()
         }
