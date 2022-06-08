@@ -1,5 +1,6 @@
 /*Codegen*/
 // tslint:disable
+// @ts-nocheck
 /* eslint-disable */
 import {createConnection, Connection, getManager, EntityManager} from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
