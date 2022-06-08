@@ -1,6 +1,6 @@
 {
   "name": "grunt-generate-database",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "description": "CLI for generate typeorm wrappers for postgreSQL and MsSQL",
   "private": false,
   "main": "dist/src/index.js",
